@@ -1,0 +1,14 @@
+Layout
+Display dummy data
+Button actions
+Event loop to drive countdown timer
+Dart Tindeq
+  - Connect to Tindeq
+  - Get Batt voltage
+  - Then the weight measures
+Integrate
+Save data to ISAR
+Retrieve data and analyse
+Trending analysis
+Email data
+Correlate user data with climbing grade
