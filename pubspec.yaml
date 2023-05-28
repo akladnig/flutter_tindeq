@@ -20,9 +20,7 @@ dependencies:
   graphic: ^2.2.0
   intl: any
   riverpod_annotation: ^2.1.1
-  scidart: ^0.0.2-dev.12
   statistics: ^1.0.25
-  syncfusion_flutter_charts: ^21.2.5
 
 dev_dependencies:
   flutter_test:

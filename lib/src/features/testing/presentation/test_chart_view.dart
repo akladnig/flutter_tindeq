@@ -1,29 +1,24 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
-import 'package:flutter_tindeq/src/features/testing/testing_models.dart';
+import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
 class TestChart extends StatefulWidget {
-  final PointList dataLeft;
-  final PointList? dataRight;
+  final PointListClass dataLeft;
+  final PointListClass? dataRight;
   final double duration;
-  final String? legendLeft;
-  final String? legendRight;
-  final Point? pointLeft;
-  final Point? pointRight;
-  final Line? lineLeft;
-  final Line? lineRight;
-  const TestChart(
-      {super.key,
-      required this.dataLeft,
-      this.dataRight,
-      required this.duration,
-      this.legendLeft,
-      this.legendRight,
-      this.pointLeft,
-      this.pointRight,
-      this.lineLeft,
-      this.lineRight});
+  final List<Legend>? legends;
+  final PointListClass? points;
+  final List<(Line, Color)>? lines;
+  const TestChart({
+    super.key,
+    required this.dataLeft,
+    this.dataRight,
+    required this.duration,
+    this.legends,
+    this.points,
+    this.lines,
+  });
 
   @override
   State<TestChart> createState() => _TestChartState();
@@ -34,11 +29,7 @@ class _TestChartState extends State<TestChart> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        if (widget.legendLeft != null)
-          lineLegend(
-            widget.legendLeft,
-            widget.legendRight,
-          ),
+        if (widget.legends != null) lineLegend(widget.legends),
         AspectRatio(
           aspectRatio: 1.70,
           child: Padding(
@@ -59,12 +50,12 @@ class _TestChartState extends State<TestChart> {
 
   /// Overlays a legend box for the line(s)
   /// TODO add a button to only show the line that is clicked on
-  Positioned lineLegend(
-    String? legendLeft,
-    String? legendRight, {
-    left = 80.0,
-    top = 30.0,
-  }) {
+  /// TODO Legend position based on media query etc.
+  Positioned lineLegend(List<Legend>? legends, {left = 80.0, top = 30.0}) {
+    List<Row> legendRows = [];
+    for (var legend in legends!) {
+      legendRows.add(legendRow(legend));
+    }
     return Positioned(
       left: left,
       top: top,
@@ -74,42 +65,20 @@ class _TestChartState extends State<TestChart> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.square,
-                  size: 10,
-                  color: ChartColours.lineColorL,
-                ),
-                Text("  ${legendLeft!}"),
-              ],
-            ),
-            if (legendRight != null)
-              Row(
-                children: [
-                  const Icon(
-                    Icons.square,
-                    size: 10,
-                    color: ChartColours.lineColorR,
-                  ),
-                  Text("  $legendRight"),
-                ],
-              ),
-          ],
+          children: legendRows,
         ),
       ),
     );
   }
 
   LineChartData mainData() {
-    var dataLeft = widget.dataLeft;
+    var dataLeft = widget.dataLeft.toFixed();
     List<FlSpot> spotListL =
         dataLeft.map((dataLeft) => FlSpot(dataLeft.$1, dataLeft.$2)).toList();
 
     List<FlSpot> spotListR = [];
     if (widget.dataRight != null) {
-      var dataRight = widget.dataRight!;
+      var dataRight = widget.dataRight!.toFixed();
       spotListR.addAll(dataRight
           .map((dataRight) => FlSpot(dataRight.$1, dataRight.$2))
           .toList());
@@ -120,6 +89,15 @@ class _TestChartState extends State<TestChart> {
     double xAxisGridInterval = (widget.duration > 20) ? 10.0 : 1.0;
     double xAxisLabelInterval = (widget.duration > 20) ? 20.0 : 1.0;
 
+    List<LineChartBarData> chartDataList = [];
+    chartDataList.add(plotData(spotListL, ChartColours.gradientColorsL));
+    if (widget.dataRight != null) {
+      chartDataList.add(plotData(spotListR, ChartColours.gradientColorsR));
+    }
+    if (widget.points != null) chartDataList.add(plotPoints(widget.points));
+    if (widget.lines != null) {
+      chartDataList.addAll(plotLines(widget.lines));
+    }
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -174,17 +152,8 @@ class _TestChartState extends State<TestChart> {
       minY: 0,
       maxY: 60,
       //TODO: Dot display - round to integer
-      lineTouchData: LineTouchData(enabled: false),
-      lineBarsData: [
-        plotData(spotListL, ChartColours.gradientColorsL),
-        if (widget.dataRight != null)
-          plotData(spotListR, ChartColours.gradientColorsR),
-        if (widget.pointLeft != null) plotPoint(widget.pointLeft),
-        if (widget.pointRight != null) plotPoint(widget.pointRight),
-        if (widget.lineLeft != null)
-          plotLine(widget.lineLeft, colour: Colors.greenAccent),
-        if (widget.lineRight != null) plotLine(widget.lineRight),
-      ],
+      lineTouchData: LineTouchData(enabled: true),
+      lineBarsData: chartDataList,
     );
   }
 
@@ -202,31 +171,59 @@ class _TestChartState extends State<TestChart> {
   }
 
   /// Plots a single line - used to show maximum RFD
-  LineChartBarData plotLine(Line? line, {colour = ChartColours.lineColor}) {
-    Point start = line!.$1;
-    Point end = line.$2;
-    return LineChartBarData(
-      spots: [
-        FlSpot(start.$1, start.$2),
-        FlSpot(end.$1, end.$2),
-      ],
-      color: colour,
-      dotData: FlDotData(
-        show: false,
-      ),
-      barWidth: 1,
-    );
+  List<LineChartBarData> plotLines(List<(Line, Color)>? lineTypes) {
+    List<LineChartBarData> lineCharts = [];
+    for (var lineType in lineTypes!) {
+      Point start = (lineType.$1).$1;
+      //TODO change this to a function
+      start = (start.$1, ((start.$2) * 10).round() / 10);
+      Point end = (lineType.$1).$2;
+      end = (end.$1, ((end.$2) * 10).round() / 10);
+
+      lineCharts.add(LineChartBarData(
+        spots: [
+          FlSpot(start.$1, start.$2),
+          FlSpot(end.$1, end.$2),
+        ],
+        color: lineType.$2,
+        dotData: FlDotData(
+          show: false,
+        ),
+        barWidth: 1,
+      ));
+    }
+    return lineCharts;
   }
 
-// Plots a single point on the Chart - Used to show the maximum part of a plot
-// TODO: dot styling
-  LineChartBarData plotPoint(Point? point, {colour = ChartColours.dotColor}) {
+  // TODO: dot styling
+
+  LineChartBarData plotPoints(PointListClass? points,
+      {colour = ChartColours.dotColor}) {
+    List<FlSpot> spotList = [];
+    for (var point in points!.toFixed()) {
+      spotList.add(FlSpot(point.$1, point.$2));
+    }
     return LineChartBarData(
-      spots: [FlSpot(point!.$1, point.$2)],
+      // Set barwidth to 0 so that only the spots are drawn
+      barWidth: 0,
+      spots: spotList,
       color: colour,
       dotData: FlDotData(
         show: true,
       ),
+    );
+  }
+
+  Row legendRow(Legend legend) {
+    return Row(
+      children: [
+        Icon(
+          Icons.square,
+          size: 10,
+          color: legend.colour,
+        ),
+        Text("  ${legend.title}"),
+      ],
     );
   }
 }

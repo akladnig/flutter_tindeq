@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/breakpoints.dart';
+import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
 import 'package:flutter_tindeq/src/localization/string_hardcoded.dart';
 
-/// Displays detailed information about a SampleItem.
 class UserDetailsView extends StatefulWidget {
   const UserDetailsView({super.key});
 
@@ -31,29 +32,28 @@ class _UserDetailsViewState extends State<UserDetailsView> {
   }
 }
 
-class UserDetails extends StatefulWidget {
+class UserDetails extends ConsumerStatefulWidget {
   const UserDetails({super.key});
 
   @override
-  State<UserDetails> createState() => _UserDetailsState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _UserDetailsState();
 }
 
-class _UserDetailsState extends State<UserDetails> {
+class _UserDetailsState extends ConsumerState<UserDetails> {
   final TextEditingController gripTypeController = TextEditingController();
-  double currentRedPointSliderValue = 20;
-  double currentWeightSliderValue = 70;
-  double currentEdgeSizeSliderValue = 20;
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<GripTypeLabel>> gripTypeEntries =
-        <DropdownMenuEntry<GripTypeLabel>>[];
-    for (final GripTypeLabel color in GripTypeLabel.values) {
+    final List<DropdownMenuEntry<GripType>> gripTypeEntries =
+        <DropdownMenuEntry<GripType>>[];
+    for (final GripType color in GripType.values) {
       gripTypeEntries.add(
-        DropdownMenuEntry<GripTypeLabel>(
+        DropdownMenuEntry<GripType>(
             value: color, label: color.label, enabled: color.label != 'Grey'),
       );
     }
+    // Watch for user changes
+    User user = ref.watch(userProvider);
 
     return Container(
       width: Breakpoint.tablet,
@@ -62,95 +62,100 @@ class _UserDetailsState extends State<UserDetails> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-           TextField(
+          TextField(
             decoration: InputDecoration(
               labelText: 'User Name'.hardcoded,
               border: const OutlineInputBorder(),
             ),
-          ),
-          Column(
-            children: [
-              Text(
-                  'Weight: ${currentWeightSliderValue.round().toInt().toString()}kg'.hardcoded),
-              Slider(
-                  value: currentWeightSliderValue,
-                  min: 40,
-                  max: 100,
-                  divisions: 60,
-                  label: currentWeightSliderValue.round().toInt().toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      currentWeightSliderValue = value;
-                    });
-                  }),
-            ],
-          ),
-          Column(
-            children: [
-              Text(
-                  'Red Point Grade: ${currentRedPointSliderValue.round().toInt().toString()}'.hardcoded),
-              Slider(
-                  value: currentRedPointSliderValue,
-                  min: 3,
-                  max: 39,
-                  divisions: 36,
-                  label: currentRedPointSliderValue.round().toInt().toString(),
-                  onChanged: (value) {
-                    setState(() {
-                      currentRedPointSliderValue = value;
-                    });
-                  }),
-            ],
-          ),
-          // const Text('Grip Type: '),
-          DropdownMenu<GripTypeLabel>(
-            initialSelection: GripTypeLabel.halfCrimp,
-            controller: gripTypeController,
-            label:  Text('Grip Type'.hardcoded),
-            dropdownMenuEntries: gripTypeEntries,
-            onSelected: (GripTypeLabel? color) {
-              setState(() {
-                // selectedGripType = label;
-              });
+            onChanged: (value) {
+              ref.read(userProvider).userName = value;
+              setState(() {});
             },
           ),
           Column(
             children: [
-              Text(
-                  'Edge Size: ${currentEdgeSizeSliderValue.round().toInt().toString()}mm'.hardcoded),
+              Text('Weight: ${user.weight.round().toInt().toString()}kg'
+                  .hardcoded),
               Slider(
-                  value: currentEdgeSizeSliderValue,
-                  min: 10,
-                  max: 30,
-                  divisions: 20,
-                  label: currentEdgeSizeSliderValue.round().toInt().toString(),
+                  value: user.weight,
+                  min: 40,
+                  max: 100,
+                  divisions: 60,
+                  label: user.weight.round().toInt().toString(),
                   onChanged: (value) {
-                    debugPrint("setState");
-                    setState(() {
-                      currentEdgeSizeSliderValue = value;
-                    });
+                    ref.read(userProvider).weight = value;
+                    setState(() {});
                   }),
             ],
           ),
-           TextField(
+          Column(
+            children: [
+              Text(
+                  'Red Point Grade: ${user.redPointGrade.round().toInt().toString()}'
+                      .hardcoded),
+              Slider(
+                  value: user.redPointGrade.toDouble(),
+                  min: 3,
+                  max: 39,
+                  divisions: 36,
+                  label: user.redPointGrade.round().toInt().toString(),
+                  onChanged: (value) {
+                    ref.read(userProvider).redPointGrade = value.toInt();
+                    setState(() {});
+                  }),
+            ],
+          ),
+          // const Text('Grip Type: '),
+          DropdownMenu<GripType>(
+            initialSelection: GripType.halfCrimp,
+            // controller: gripTypeController,
+            label: Text('Grip Type'.hardcoded),
+            dropdownMenuEntries: gripTypeEntries,
+            onSelected: (value) {
+              ref.read(userProvider).gripType = value!;
+              setState(() {});
+            },
+          ),
+          Column(
+            children: [
+              Text('Edge Size: ${user.edgeSize.round().toInt().toString()}mm'
+                  .hardcoded),
+              Slider(
+                  value: user.edgeSize.toDouble(),
+                  min: 10,
+                  max: 30,
+                  divisions: 20,
+                  label: user.edgeSize.round().toInt().toString(),
+                  onChanged: (value) {
+                    ref.read(userProvider).edgeSize = value.toInt();
+                    setState(() {});
+                  }),
+            ],
+          ),
+          TextField(
             minLines: 10,
             maxLines: 20,
             decoration: InputDecoration(
               labelText: 'Notes'.hardcoded,
               border: const OutlineInputBorder(),
             ),
+            onChanged: (value) {
+              ref.read(userProvider).notes = value;
+              setState(() {});
+            },
           ),
+          Column(
+            children: [
+              Text("User Name: ${user.userName}"),
+              Text("Weight: ${user.weight}"),
+              Text("Redpoint Grade: ${user.redPointGrade}"),
+              Text("Grip Type: ${user.gripType.label}"),
+              Text("Edge Size: ${user.edgeSize}"),
+              Text("Notes: ${user.notes}"),
+            ],
+          )
         ],
       ),
     );
   }
-}
-//TODO enum localization
-enum GripTypeLabel {
-  halfCrimp('Half Crimp'),
-  threeFingerDrag('3 Finger Drag'),
-  lockOff('Lock Off');
-
-  const GripTypeLabel(this.label);
-  final String label;
 }

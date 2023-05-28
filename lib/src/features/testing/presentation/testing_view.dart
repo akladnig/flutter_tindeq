@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
-import 'package:flutter_tindeq/src/features/testing/max_test_view.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/max_test_view.dart';
 import 'package:flutter_tindeq/src/routing/app_router.dart';
 import 'package:go_router/go_router.dart';
 

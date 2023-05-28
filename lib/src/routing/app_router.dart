@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tindeq/src/features/testing/cft_test_view.dart';
-import 'package:flutter_tindeq/src/features/testing/max_test_view.dart';
-import 'package:flutter_tindeq/src/features/testing/rfd_test_view.dart';
-import 'package:flutter_tindeq/src/features/trend_analysis/trend_analysis_view.dart';
-import 'package:flutter_tindeq/src/features/user_details_view.dart';
+import 'package:flutter_tindeq/src/features/analysis/presentation/analysis_view.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/cft_test_view.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/max_test_view.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/rfd_test_view.dart';
+import 'package:flutter_tindeq/src/features/user_details/presentation/user_details_view.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoute {
@@ -12,6 +12,7 @@ enum AppRoute {
   maxTest,
   rfdTest,
   cftTest,
+  analysisResults,
   trendAnalysis,
   settings
 }
@@ -61,12 +62,12 @@ final goRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/trend_analysis',
-      name: AppRoute.trendAnalysis.name,
+      path: '/analysis',
+      name: AppRoute.analysisResults.name,
       pageBuilder: (context, state) {
         return FadeTransitionPage(
           key: state.pageKey,
-          child: const TrendAnalysisView(),
+          child: const AnalysisView(),
         );
       },
     ),

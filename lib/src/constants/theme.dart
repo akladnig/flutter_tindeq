@@ -82,9 +82,19 @@ class TextStyles {
     fontSize: Sizes.extraLarge,
     color: foregroundColour,
   );
+  static const TextStyle h1Colour = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: Sizes.extraLarge,
+    color: Colors.blue,
+  );
   static TextStyle h2 = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: Sizes.large,
+    color: foregroundColour,
+  );
+  static TextStyle h3 = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: Sizes.medium,
     color: foregroundColour,
   );
   static TextStyle body = TextStyle(

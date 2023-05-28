@@ -33,6 +33,8 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
             context.goNamed(AppRoute.rfdTest.name);
           case 3:
             context.goNamed(AppRoute.cftTest.name);
+          case 4:
+            context.goNamed(AppRoute.analysisResults.name);
         }
         setState(() {
           _selectedIndex = index;
@@ -66,6 +68,11 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
             child: const Icon(Icons.signal_cellular_alt),
           ),
           label: Text('CFT Test'.hardcoded),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Icons.trending_up),
+          selectedIcon: const Icon(Icons.trending_up),
+          label: Text('Analysis Results'.hardcoded),
         ),
       ],
     );

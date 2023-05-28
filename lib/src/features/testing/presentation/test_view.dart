@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tindeq/src/features/testing/test_chart_view.dart';
-import 'package:flutter_tindeq/src/features/testing/test_widgets.dart';
-import 'package:flutter_tindeq/src/features/testing/testing_models.dart';
+import 'package:flutter_tindeq/src/constants/theme.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/test_chart_view.dart';
+import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
+import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
 class TestView extends StatelessWidget {
   const TestView(
@@ -9,30 +10,24 @@ class TestView extends StatelessWidget {
     super.key,
     required this.dataLeft,
     this.dataRight,
-    this.valueLeft,
-    this.valueRight,
-    this.pointLeft,
-    this.pointRight,
-    this.lineLeft,
-    this.lineRight,
-    required this.startButtonLeft,
-    this.startButtonRight,
+    this.points,
+    this.legends,
+    this.lines,
+    // required this.startButtonLeft,
+    // this.startButtonRight,
     required this.countdownTime,
     required this.duration,
     this.units = "kg",
     required this.results,
   });
-  final PointList dataLeft;
-  final PointList? dataRight;
-  final double? valueLeft;
-  final double? valueRight;
-  final Point? pointLeft;
-  final Point? pointRight;
-  final Line? lineLeft;
-  final Line? lineRight;
+  final PointListClass dataLeft;
+  final PointListClass? dataRight;
+  final PointListClass? points;
+  final List<Legend>? legends;
+  final List<(Line, Color)>? lines;
   final String title;
-  final StartButton startButtonLeft;
-  final StartButton? startButtonRight;
+  // final StartButton startButtonLeft;
+  // final StartButton? startButtonRight;
   final CountDownTime countdownTime;
   final double duration;
   final String units;
@@ -40,9 +35,6 @@ class TestView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? legendLeft = (startButtonRight == null) ? null : "Left";
-    String? legendRight = (startButtonRight == null) ? null : "Right";
-
     double mediaWidth = MediaQuery.of(context).size.width;
     debugPrint(mediaWidth.toString());
     // var resultsWidth = mediaWidth * 0.3;
@@ -52,12 +44,7 @@ class TestView extends StatelessWidget {
       children: <Widget>[
         const SizedBox(height: 80.0),
         // [Name]
-        Text(title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-              color: Colors.blue,
-            )),
+        Text(title, style: TextStyles.h1Colour),
         Container(
           constraints: const BoxConstraints.expand(height: 500),
           child: Row(
@@ -85,15 +72,12 @@ class TestView extends StatelessWidget {
                 width: plotWidth,
                 height: 400,
                 child: TestChart(
-                  legendLeft: legendLeft,
-                  legendRight: legendRight,
+                  legends: legends,
                   dataLeft: dataLeft,
                   dataRight: dataRight,
                   duration: duration,
-                  pointLeft: pointLeft,
-                  pointRight: pointRight,
-                  lineLeft: lineLeft,
-                  lineRight: lineRight,
+                  points: points,
+                  lines: lines,
                 ),
               )
             ],

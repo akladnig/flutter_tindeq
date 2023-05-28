@@ -565,14 +565,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-  scidart:
-    dependency: "direct main"
-    description:
-      name: scidart
-      sha256: af816eed552cadb6a9a324c594515b0cdff41617839345c382047927bd8dc02d
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2-dev.12"
   shelf:
     dependency: transitive
     description:
@@ -658,22 +650,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  syncfusion_flutter_charts:
-    dependency: "direct main"
-    description:
-      name: syncfusion_flutter_charts
-      sha256: a3694508b7a7bc366a5ce27b6ab3be60a32bc994d1fd806f6d57e81ed9ca637c
-      url: "https://pub.dev"
-    source: hosted
-    version: "21.2.5"
-  syncfusion_flutter_core:
-    dependency: transitive
-    description:
-      name: syncfusion_flutter_core
-      sha256: b2ad1c93239b094d6de1b4679c1835b1bc4332e6c6548bd2da44bd2594e6cdc5
-      url: "https://pub.dev"
-    source: hosted
-    version: "21.2.5"
   term_glyph:
     dependency: transitive
     description:
