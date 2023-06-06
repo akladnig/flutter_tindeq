@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
+import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //TODO add ability to do mulitple tests for different grip types - maybe a separate grip tests menu item?
-class MaxTestingView extends StatelessWidget {
+class MaxTestingView extends HookWidget {
   const MaxTestingView({super.key});
 
   @override
@@ -43,13 +45,12 @@ class MaxTestView extends ConsumerWidget {
     (title: "Left", colour: ChartColours.contentColorBlue),
     (title: "Right", colour: ChartColours.contentColorRed)
   ];
-  final countdownTime = const CountDownTime(time: 10.0);
-  final double duration = 12.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final startButtonLeft =  StartButton(maxAction(Hand.left, ref));
-    // final startButtonRight =  StartButton(maxAction(Hand.right, ref));
+    const CountDownWidget countdownTime = CountDownWidget(maxTimes);
+
+
     return TestView(
       "Maximum Strength Test",
       dataLeft: dataLeft,
@@ -59,16 +60,16 @@ class MaxTestView extends ConsumerWidget {
         (dataLeft.meanLine, ChartColours.contentColorBlue),
         (dataRight.meanLine, ChartColours.contentColorRed)
       ],
-      // startButtonLeft: startButtonLeft,
-      // startButtonRight: startButtonRight,
       countdownTime: countdownTime,
-      duration: duration,
-      results: Results((
-        points[0].force,
-        dataLeft.mean.force,
-        points[0].force,
-        dataRight.mean.force,
-      )),
+      duration:maxTimes.totalDuration,
+      results: Results(
+        (
+          points[0].force,
+          dataLeft.mean.force,
+          points[0].force,
+          dataRight.mean.force,
+        ),
+      ),
     );
   }
 }
@@ -82,10 +83,16 @@ class Results extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        TestResultsHeader("Left Hand", maxAction(Hand.left, ref)),
+        TestResultsHeader(
+            Tests.maxTestLeft,
+            "Left Hand",
+            () => maxAction(Hand.left, ref)),
         ResultsBody((values.$1, values.$2)),
         gapHMED,
-        TestResultsHeader("Right Hand", maxAction(Hand.right, ref)),
+        TestResultsHeader(
+            Tests.maxTestRight,
+            "Right Hand",
+            () => maxAction(Hand.right, ref)),
         ResultsBody((values.$3, values.$4))
       ],
     );

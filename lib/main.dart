@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tindeq/src/features/testing/application/sound_helper.dart';
+import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
 import 'package:flutter_tindeq/src/localization/string_hardcoded.dart';
 
 import 'src/app.dart';
@@ -20,6 +22,7 @@ void main() async {
   // Load the user's preferred theme while the splash screen is displayed.
   // This prevents a sudden theme change when the app is first displayed.
   await settingsController.loadSettings();
+  await (SoundHelper.loadSounds());
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
@@ -50,4 +53,3 @@ void registerErrorHandlers() {
     );
   };
 }
-

@@ -1,7 +1,10 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:statistics/statistics.dart';
+
+part 'testing_models.g.dart';
 
 typedef Point = (double, double);
 typedef NamedPoint = ({double force, double time});
@@ -22,6 +25,58 @@ enum Hand {
   final String label;
 }
 
+enum TestState { notStarted, inProgress, complete, failed }
+
+//TODO should this be a list?
+enum Tests {
+  none('none'),
+  maxTestLeft('maxTestLeft'),
+  maxTestRight('maxTestRight'),
+  rfdTestLeft('rfdTestLeft'),
+  rfdTestRight('rfdTestRight'),
+  cftTest('cftTest');
+
+  const Tests(this.label);
+  final String label;
+}
+
+// A record to hold the status of each test
+typedef TestStatus = (Tests, TestState);
+
+@riverpod
+class CurrentTest extends _$CurrentTest {
+  (Tests, TestState) _currentTest = (Tests.none, TestState.notStarted);
+
+  @override
+  (Tests, TestState) build() => _currentTest;
+
+  setTest(Tests test, TestState testState) {
+    _currentTest = (test, testState);
+    state = _currentTest;
+  }
+}
+
+@riverpod
+/// Holds the status of all the tests
+class AllTests extends _$AllTests {
+  final Map<Tests, TestState> _tests = {
+    Tests.maxTestLeft: TestState.notStarted,
+    Tests.maxTestRight: TestState.notStarted,
+    Tests.rfdTestLeft: TestState.notStarted,
+    Tests.rfdTestRight: TestState.notStarted,
+    Tests.cftTest: TestState.notStarted,
+  };
+
+  @override
+  Map<Tests, TestState> build() => _tests;
+
+  setTest(Tests test, TestState testState) {
+    _tests[test] = testState;
+    state = _tests;
+  }
+}
+
+//TODO move all the methods to a controller class
 class PointListClass extends ListBase<Point> {
   final List<Point> pointList;
   PointListClass(this.pointList);

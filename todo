@@ -1,7 +1,15 @@
 Layout
+- responsive and adaptive design
+- light and dark mode
+- general tidy up 
 Display dummy data
+- start display of data on press of start button
+- display results when coundtdown is finished
+- setup a dummy stream repository for the hardcoded data with dummy delays
+- setup a dummy ISAR database
 Button actions
-Event loop to drive countdown timer
+- make a dummy "waiting for progressor"
+# Event loop to drive countdown timer
 Dart Tindeq
   - Connect to Tindeq
   - Get Batt voltage

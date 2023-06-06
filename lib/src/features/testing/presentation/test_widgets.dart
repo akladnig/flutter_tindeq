@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
+import 'package:flutter_tindeq/src/constants/app_sizes.dart';
+import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
+import 'package:flutter_tindeq/src/features/testing/application/countdown_controller.dart';
+import 'package:flutter_tindeq/src/features/testing/domain/countdown_model.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
-import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
+import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TestingView extends StatelessWidget {
   const TestingView({
@@ -34,67 +37,165 @@ class TestingView extends StatelessWidget {
   }
 }
 
-class StartButton extends ConsumerStatefulWidget {
-  const StartButton(this.action, {super.key});
-  final void action;
+class StartButton extends HookConsumerWidget {
+  const StartButton(this.testKey, {super.key});
+  final Tests testKey;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _StartButtonState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentTestState = ref.watch(currentTestProvider);
+    var allTests = ref.watch(allTestsProvider);
+    final tindeqConnected = ref.watch(tindeqConnectedProvider);
 
-class _StartButtonState extends ConsumerState<StartButton> {
-  @override
-  Widget build(BuildContext context) {
-    ButtonStyle buttonStyle =
-        ElevatedButton.styleFrom(backgroundColor: Colors.green);
+    bool connected = tindeqConnected.when(
+      loading: () => false,
+      error: (_, err) => false,
+      data: (_) => true,
+    );
+    var buttonText = useState(ButtonState.waiting);
+
+    if (!connected) {
+      buttonText.value = ButtonState.waiting;
+    } else {
+      debugPrint(
+          "StartButton: $connected $allTests $testKey, ${currentTestState.$1} ${currentTestState.$2}");
+      if (allTests[testKey] == TestState.notStarted) {
+        buttonText.value = ButtonState.start;
+        // If the [testKey] test is in progress and current test is complete update
+        // the tests status and reset the crurent test
+      } else if ((allTests[testKey] == TestState.inProgress) &
+          (currentTestState.$1 == testKey) &
+          (currentTestState.$2 == TestState.complete)) {
+        buttonText.value = ButtonState.complete;
+        // Reset the current test
+        Future(() => ref
+            .read(currentTestProvider.notifier)
+            .setTest(Tests.none, TestState.notStarted));
+        Future(() => ref
+            .read(allTestsProvider.notifier)
+            .setTest(testKey, TestState.complete));
+      } else if (allTests[testKey] == TestState.complete) {
+        buttonText.value = ButtonState.complete;
+      }
+    }
+
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.fromLTRB(0, Sizes.xSmall, 0, Sizes.xSmall),
       child: ElevatedButton(
-        style: buttonStyle,
         onPressed: () {
-          PointListClass meansList = getCftEdges(pointListCft);
-          ref.read(testResultsProvider).peakForce = meansList[0].$2;
-          ref.read(testResultsProvider).criticalForce = criticalLoad(meansList);
+          debugPrint("Start Button Pressed $testKey $currentTestState");
+          if ((currentTestState.$2 == TestState.notStarted)) {
+            buttonText.value = ButtonState.start;
+            // When starting a new test:
+            // Reset the Reps to 0
+            // Start the timer and
+            // set the test status to In Progress
+            ref.read(repProvider.notifier).reset();
+
+            ref.read(startTimerProvider.notifier).start();
+            ref
+                .read(currentTestProvider.notifier)
+                .setTest(testKey, TestState.inProgress);
+            ref
+                .read(allTestsProvider.notifier)
+                .setTest(testKey, TestState.inProgress);
+            debugPrint("in the IF ${ref.watch(startTimerProvider)}");
+          }
         },
-        child: const Text(
-          'Start Test',
-          style: TextStyle(color: Colors.white),
-        ),
+        style:
+            ElevatedButton.styleFrom(backgroundColor: buttonText.value.colour),
+        child: Text(buttonText.value.label),
       ),
     );
   }
 }
 
-class CountDownTime extends StatelessWidget {
-  const CountDownTime({super.key, required this.time});
+class CountDownWidget extends HookConsumerWidget {
+  const CountDownWidget(this.testTimes, {super.key});
 
-  final double time;
+  final TestTimes testTimes;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool startTimer = ref.watch(startTimerProvider);
+    final timerState = useState(TimerState.idle);
+
+    // Used for the current countdown
+    final countdown = useState(0);
+
+    //TODO move out of here
+    final currentCountdown = useState(testTimes.countdownTime);
+
+    /// Determine the current TimerState based on:
+    /// If the Tindeq Progressor has not connected via Bluetooth then we are [waiting] for a connection
+    /// and so will not be able to start the timer until a connection is made.
+    /// - startTimer == false, then timerState == waiting.
+    //TODO Riverpod TindeqProvider
+
+    getTimerState(timerState, countdown, currentCountdown, testTimes, ref);
+
+    // debugPrint("${timerState.value} ${countdown.value} ${currentCountdown.value} ");
+    useTimer(
+      () {
+        countdown.value++;
+        currentCountdown.value--;
+      },
+      startTimer,
+    );
+
+    final timeInSeconds = currentCountdown.value;
+    final timeDisplay = CountDownTime(
+      time: timeInSeconds,
+      timerState: timerState.value,
+    );
+    return Column(children: [
+      timeDisplay,
+    ]);
+  }
+}
+
+/// Displays the Countdown [time] in Secs. The background colour is based on the [timerState]
+class CountDownTime extends StatelessWidget {
+  const CountDownTime(
+      {super.key, required this.time, required this.timerState});
+
+  final int time;
+  final TimerState timerState;
 
   @override
   Widget build(BuildContext context) {
-    String timeSecs = time.truncate().toString().padLeft(2, '0');
-    String timeMs =
-        ((time - time.truncate()) * 100).round().toString().padRight(2, '0');
-    return Text("$timeSecs:$timeMs",
-        style: const TextStyle(
+    String timeSecs = time.ceil().toString().padLeft(2, '0');
+
+    return Container(
+      width: 400,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: timerState.colour),
+      child: Text(
+        timeSecs,
+        textAlign: TextAlign.right,
+        style: TextStyle(
+            fontFamily: 'B612Mono',
             fontWeight: FontWeight.bold,
-            fontSize: 100,
+            fontSize: 200,
             color: Colors.white,
-            backgroundColor: Colors.deepOrange));
+            backgroundColor: timerState.colour),
+      ),
+    );
   }
 }
 
 class TestResultsHeader extends StatelessWidget {
-  const TestResultsHeader(this.header, this.action, {super.key});
-
+  const TestResultsHeader(this.testKey, this.header, this.action, {super.key});
+  final Tests testKey;
   final String header;
   final Function() action;
 
   @override
   Widget build(BuildContext context) {
+    final startButton = StartButton(testKey);
     return Column(children: [
       Text(header, style: TextStyles.h1Colour),
-      StartButton(action),
+      startButton,
     ]);
   }
 }
@@ -122,22 +223,18 @@ class ResultsRow extends StatelessWidget {
   }
 }
 
-class ButtonText extends StatefulWidget {
+class ButtonText extends HookWidget {
   const ButtonText({
-    this.text = 'Start Test',
+    this.text = 'Start Testing',
     super.key,
   });
   final String text;
 
   @override
-  State<ButtonText> createState() => _ButtonTextState();
-}
-
-class _ButtonTextState extends State<ButtonText> {
-  @override
   Widget build(BuildContext context) {
     return Text(
-      widget.text,
+      text,
+      //TODO theme colour
       style: const TextStyle(color: Colors.white),
     );
   }

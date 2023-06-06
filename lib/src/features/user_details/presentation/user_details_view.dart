@@ -58,9 +58,9 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     return Container(
       width: Breakpoint.tablet,
       padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: ListView(
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextField(
             decoration: InputDecoration(

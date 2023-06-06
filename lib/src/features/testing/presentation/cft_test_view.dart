@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
+import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
@@ -9,18 +9,18 @@ import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
 import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //TODO put this into common widgets - pass as parameter from appRouter
-class CftTestingView extends ConsumerStatefulWidget {
+class CftTestingView extends HookConsumerWidget {
   const CftTestingView({super.key});
 
   @override
-  ConsumerState<CftTestingView> createState() => _CftTestingViewState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    //TODO also called by CftAction
+    PointListClass meansList = getCftEdges(pointListCft);
+    TestResults testResults = ref.watch(testResultsProvider);
 
-class _CftTestingViewState extends ConsumerState<CftTestingView> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       // appBar: const PreferredSize(
       //     preferredSize: Size.fromHeight(80.0),
@@ -31,7 +31,24 @@ class _CftTestingViewState extends ConsumerState<CftTestingView> {
             const NavigationRailWidget(),
             const VerticalDivider(thickness: 2, width: 1),
             Expanded(
-              child: CftTestView(),
+              child: TestView(
+                "Critical Force Test",
+                dataLeft: pointListCft,
+                points: meansList,
+                lines: [
+                  (
+                    (
+                      (0.0, testResults.criticalForce),
+                      (240.0, testResults.criticalForce)
+                    ),
+                    ChartColours.contentColorRed
+                  )
+                ],
+                // startButton: const StartButton(),
+                results: const Results(),
+                countdownTime: const CountDownWidget(cftTimes),
+                duration: cftTimes.totalDuration,
+              ),
             ),
           ],
         ),
@@ -40,67 +57,15 @@ class _CftTestingViewState extends ConsumerState<CftTestingView> {
   }
 }
 
-class CftTestView extends ConsumerStatefulWidget {
-  CftTestView({super.key});
-  final dataLeft = pointListCft;
-  //TODO put these constants somewhere sensible
-  final countdownTime = const CountDownTime(time: 10.0);
-  final double duration = 240.0;
-
-  @override
-  ConsumerState<CftTestView> createState() => _CftTestViewState();
-}
-
-class _CftTestViewState extends ConsumerState<CftTestView> {
-  @override
-  Widget build(BuildContext context) {
-    // final startButtonLeft = StartButton(cftAction(ref));
-    PointListClass meansList = getCftEdges(pointListCft);
-    //TODO move to controller so that these values are set once data capture is complete
-    // ref.read(testResultsProvider).peakForce = meansList[0].$2;
-    // ref.read(testResultsProvider).criticalForce = criticalLoad(meansList);
-
-    TestResults testResults = ref.watch(testResultsProvider);
-
-    return TestView(
-      "Critical Force Test",
-      dataLeft: pointListCft,
-      points: meansList,
-      lines: [
-        (
-          (
-            (0.0, testResults.criticalForce),
-            (240.0, testResults.criticalForce)
-          ),
-          ChartColours.contentColorRed
-        )
-      ],
-      // startButtonLeft: startButtonLeft,
-      countdownTime: widget.countdownTime,
-      duration: widget.duration,
-      results: const Results(),
-    );
-  }
-}
-
-class Results extends ConsumerStatefulWidget {
+class Results extends HookConsumerWidget {
   const Results({super.key});
 
   @override
-  ConsumerState<Results> createState() => _ResultsState();
-}
-
-class _ResultsState extends ConsumerState<Results> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     TestResults testResults = ref.watch(testResultsProvider);
     var bs = ButtonStyle(
       backgroundColor: MaterialStateProperty.resolveWith<Color?>(
         (Set<MaterialState> states) {
-          if (ref.watch(testStartedProvider).state) {
-            // if (states.contains(MaterialState.pressed)) {
-            return Theme.of(context).colorScheme.secondary;
-          }
           return null; // Use the component's default.
         },
       ),
@@ -111,9 +76,9 @@ class _ResultsState extends ConsumerState<Results> {
             style: bs,
             onPressed: () {
               cftAction(ref);
-              setState(() {});
+              // setState(() {});
             },
-            child: buttonState(ref)),
+            child: const ButtonText(text: "Start Test")),
         ResultsRow("Peak Load:", testResults.peakForce, "kg"),
         ResultsRow("Critical Load:", testResults.criticalForce, "kg"),
         //TODO

@@ -16,9 +16,9 @@ PointListClass getCftEdges(PointListClass pointList) {
 
   // Get a list of points that are above the trigger level and within the hangTime
   // and store that list in the repList
-  for (var i = 0; i < repetitions; i++) {
-    double startTime = (i * (hangTime + restTime)).toDouble();
-    double endTime = startTime + hangTime;
+  for (var i = 0; i < cftTimes.reps; i++) {
+    double startTime = (i * (cftTimes.hangTime + cftTimes.restTime)).toDouble();
+    double endTime = startTime + cftTimes.hangTime;
     PointList newList1 = pointList
         .where((element) => pointInTimeRange(element, startTime, endTime))
         .toList();

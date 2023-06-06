@@ -6,7 +6,7 @@ import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 class TestChart extends StatefulWidget {
   final PointListClass dataLeft;
   final PointListClass? dataRight;
-  final double duration;
+  final int duration;
   final List<Legend>? legends;
   final PointListClass? points;
   final List<(Line, Color)>? lines;
@@ -148,7 +148,7 @@ class _TestChartState extends State<TestChart> {
       ),
       //TODO: chart ranges - autosize?
       minX: 0,
-      maxX: widget.duration,
+      maxX: widget.duration.toDouble(),
       minY: 0,
       maxY: 60,
       //TODO: Dot display - round to integer

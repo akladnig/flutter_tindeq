@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
+import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class RfdTestingView extends StatelessWidget {
+class RfdTestingView extends HookWidget {
   const RfdTestingView({super.key});
   final value = "0.0";
 
@@ -34,7 +36,7 @@ class RfdTestingView extends StatelessWidget {
   }
 }
 
-class RfdTestView extends StatelessWidget {
+class RfdTestView extends HookConsumerWidget {
   RfdTestView({super.key});
   final PointListClass dataLeft = pointListRfdL;
   final PointListClass dataRight = pointListRfdR;
@@ -44,13 +46,9 @@ class RfdTestView extends StatelessWidget {
     (title: "Left", colour: ChartColours.contentColorBlue),
     (title: "Right", colour: ChartColours.contentColorRed)
   ];
-  // final startButtonLeft = const StartButton();
-  // final startButtonRight = const StartButton();
-  final countdownTime = const CountDownTime(time: 10.0);
-  final double duration = 12.0;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var points = PointListClass([(pointLeft.$2), (pointRight.$2)]);
     return TestView(
       "Rate of Force Development Test",
@@ -62,13 +60,12 @@ class RfdTestView extends StatelessWidget {
         (dataLeft.rfdLine, ChartColours.contentColorRed),
         (dataRight.rfdLine, ChartColours.contentColorRed)
       ],
-      // startButtonLeft: startButtonLeft,
-      // startButtonRight: startButtonRight,
-      countdownTime: countdownTime,
-      duration: duration,
+      countdownTime: const CountDownWidget(rfdTimes),
+      duration: rfdTimes.totalDuration,
       units: "kg/s",
-      results:
-          Results((dataLeft.rfdMinMax.$1, 0, 0, dataRight.rfdMinMax.$1, 0, 0)),
+      results: Results(
+        (dataLeft.rfdMinMax.$1, 0, 0, dataRight.rfdMinMax.$1, 0, 0),
+      ),
     );
   }
 }
@@ -82,10 +79,12 @@ class Results extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        TestResultsHeader("Left Hand", rfdAction(Hand.left, ref)),
+        TestResultsHeader(
+            Tests.rfdTestLeft, "Left Hand", () => rfdAction(Hand.left, ref)),
         ResultsBody((values.$1, values.$2, values.$3)),
         gapHMED,
-        TestResultsHeader("Left Hand", rfdAction(Hand.right, ref)),
+        TestResultsHeader(
+            Tests.rfdTestRight, "Left Hand", () => rfdAction(Hand.right, ref)),
         ResultsBody((values.$4, values.$5, values.$6))
       ],
     );
