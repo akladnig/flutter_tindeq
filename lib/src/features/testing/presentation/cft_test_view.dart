@@ -19,7 +19,7 @@ class CftTestingView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     //TODO also called by CftAction
     PointListClass meansList = getCftEdges(pointListCft);
-    TestResults testResults = ref.watch(testResultsProvider);
+    var testResults = ref.watch(testResultsProvider);
 
     return Scaffold(
       // appBar: const PreferredSize(
@@ -36,13 +36,13 @@ class CftTestingView extends HookConsumerWidget {
                 dataLeft: pointListCft,
                 points: meansList,
                 lines: [
-                  (
-                    (
-                      (0.0, testResults.criticalForce),
-                      (240.0, testResults.criticalForce)
-                    ),
-                    ChartColours.contentColorRed
-                  )
+                  // (
+                  //   (
+                  //     (0.0, testResults.criticalForce),
+                  //     (240.0, testResults.criticalForce)
+                  //   ),
+                  //   ChartColours.contentColorRed
+                  // )
                 ],
                 // startButton: const StartButton(),
                 results: const Results(),
@@ -62,7 +62,7 @@ class Results extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TestResults testResults = ref.watch(testResultsProvider);
+    var testResults = ref.watch(testResultsProvider);
     var bs = ButtonStyle(
       backgroundColor: MaterialStateProperty.resolveWith<Color?>(
         (Set<MaterialState> states) {
@@ -79,8 +79,8 @@ class Results extends HookConsumerWidget {
               // setState(() {});
             },
             child: const ButtonText(text: "Start Test")),
-        ResultsRow("Peak Load:", testResults.peakForce, "kg"),
-        ResultsRow("Critical Load:", testResults.criticalForce, "kg"),
+        // ResultsRow("Peak Load:", testResults.peakForce, "kg"),
+        // ResultsRow("Critical Load:", testResults.criticalForce, "kg"),
         //TODO
         const ResultsRow("Asymptotic Load:", 0, "kg"),
         const ResultsRow("W':", 0, "J"),

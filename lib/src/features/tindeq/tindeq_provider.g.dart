@@ -6,7 +6,7 @@ part of 'tindeq_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tindeqConnectedHash() => r'56b6308422539bf1a5c7e527f9a11fdcb1f13f35';
+String _$tindeqConnectedHash() => r'5dbbfc321202488b6409413b35a3832a36ce0c58';
 
 /// See also [tindeqConnected].
 @ProviderFor(tindeqConnected)

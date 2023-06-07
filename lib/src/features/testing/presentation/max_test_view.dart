@@ -9,6 +9,7 @@ import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //TODO add ability to do mulitple tests for different grip types - maybe a separate grip tests menu item?
@@ -38,8 +39,9 @@ class MaxTestingView extends HookWidget {
 
 class MaxTestView extends ConsumerWidget {
   MaxTestView({super.key});
-  final dataLeft = pointListMaxL;
-  final dataRight = pointListMaxR;
+  final PointListClass dataLeft = pointListMaxL;
+  final PointListClass dataRight = pointListMaxR;
+  //TODO move to results on test complete
   final points = [pointListMaxL.maxForce, pointListMaxR.maxForce];
   final legends = [
     (title: "Left", colour: ChartColours.contentColorBlue),
@@ -49,8 +51,8 @@ class MaxTestView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const CountDownWidget countdownTime = CountDownWidget(maxTimes);
-
-
+    var testComplete = ref.watch(allTestsProvider);
+    debugPrint("results: test complete ${testComplete[Tests.maxTestLeft]}");
     return TestView(
       "Maximum Strength Test",
       dataLeft: dataLeft,
@@ -61,7 +63,7 @@ class MaxTestView extends ConsumerWidget {
         (dataRight.meanLine, ChartColours.contentColorRed)
       ],
       countdownTime: countdownTime,
-      duration:maxTimes.totalDuration,
+      duration: maxTimes.totalDuration,
       results: Results(
         (
           points[0].force,
@@ -78,38 +80,43 @@ class Results extends ConsumerWidget {
   const Results(this.values, {super.key});
 //TODO make this a class?
   final (double, double, double, double) values;
+  //TODO watch for test completion and update results
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var testComplete = ref.watch(allTestsProvider);
+    debugPrint("results: test complete ${testComplete[Tests.maxTestLeft]}");
+    if (testComplete[Tests.maxTestLeft] == TestState.complete) {
+      Future(() => maxAction(Hand.left, ref));
+    }
+    var tests = ref.watch(testResults2Provider);
+
     return Column(
       children: [
         TestResultsHeader(
-            Tests.maxTestLeft,
-            "Left Hand",
-            () => maxAction(Hand.left, ref)),
-        ResultsBody((values.$1, values.$2)),
+            Tests.maxTestLeft, "Left Hand", () => maxAction(Hand.left, ref)),
+        ResultsBody(
+            (tests[Result.maxStrengthLeft], tests[Result.meanStrengthLeft])),
         gapHMED,
         TestResultsHeader(
-            Tests.maxTestRight,
-            "Right Hand",
-            () => maxAction(Hand.right, ref)),
+            Tests.maxTestRight, "Right Hand", () => maxAction(Hand.right, ref)),
         ResultsBody((values.$3, values.$4))
       ],
     );
   }
 }
 
-class ResultsBody extends StatelessWidget {
+class ResultsBody extends HookWidget {
   const ResultsBody(this.values, {super.key});
 
-  final (double, double) values;
+  final (double?, double?) values;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ResultsRow("Max: ", values.$1, "kg"),
-        ResultsRow("Average: ", values.$2, "kg"),
+        ResultsRow("Max: ", values.$1!, "kg"),
+        ResultsRow("Average: ", values.$2!, "kg"),
       ],
     );
   }

@@ -5,14 +5,18 @@ import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
 import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
 
-
 //TODO
 void maxAction(hand, ref) {
   switch (hand) {
     case Hand.left:
-      ref.read(testResultsProvider).maxStrengthLeft =
-          pointListMaxL.maxForce.force;
+      ref
+          .read(testResults2Provider.notifier)
+          .setResult(Result.maxStrengthLeft, pointListMaxL.maxForce.force);
+      ref.read(testResultsProvider).meanStrengthLeft = pointListMaxL.mean.force;
     case Hand.right:
+      ref
+          .read(testResults2Provider.notifier)
+          .setResult(Result.maxStrengthRight, pointListMaxL.maxForce.force);
       ref.read(testResultsProvider).maxStrengthRight =
           pointListMaxR.maxForce.force;
   }

@@ -8,7 +8,7 @@ Display dummy data
 - setup a dummy stream repository for the hardcoded data with dummy delays
 - setup a dummy ISAR database
 Button actions
-- make a dummy "waiting for progressor"
+# - make a dummy "waiting for progressor"
 # Event loop to drive countdown timer
 Dart Tindeq
   - Connect to Tindeq

@@ -43,9 +43,9 @@ class StartButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var currentTestState = ref.watch(currentTestProvider);
-    var allTests = ref.watch(allTestsProvider);
     final tindeqConnected = ref.watch(tindeqConnectedProvider);
+    final currentTestState = ref.watch(currentTestProvider);
+    final allTests = ref.watch(allTestsProvider);
 
     bool connected = tindeqConnected.when(
       loading: () => false,
@@ -57,8 +57,8 @@ class StartButton extends HookConsumerWidget {
     if (!connected) {
       buttonText.value = ButtonState.waiting;
     } else {
-      debugPrint(
-          "StartButton: $connected $allTests $testKey, ${currentTestState.$1} ${currentTestState.$2}");
+    //   debugPrint(
+    //       "StartButton: $connected $allTests $testKey, ${currentTestState.$1} ${currentTestState.$2}");
       if (allTests[testKey] == TestState.notStarted) {
         buttonText.value = ButtonState.start;
         // If the [testKey] test is in progress and current test is complete update
@@ -88,18 +88,18 @@ class StartButton extends HookConsumerWidget {
             buttonText.value = ButtonState.start;
             // When starting a new test:
             // Reset the Reps to 0
-            // Start the timer and
-            // set the test status to In Progress
             ref.read(repProvider.notifier).reset();
 
+            // Start the timer 
             ref.read(startTimerProvider.notifier).start();
+            // set the test status to In Progress
             ref
                 .read(currentTestProvider.notifier)
                 .setTest(testKey, TestState.inProgress);
             ref
                 .read(allTestsProvider.notifier)
                 .setTest(testKey, TestState.inProgress);
-            debugPrint("in the IF ${ref.watch(startTimerProvider)}");
+            // Start logging data
           }
         },
         style:
@@ -184,7 +184,7 @@ class CountDownTime extends StatelessWidget {
   }
 }
 
-class TestResultsHeader extends StatelessWidget {
+class TestResultsHeader extends HookWidget {
   const TestResultsHeader(this.testKey, this.header, this.action, {super.key});
   final Tests testKey;
   final String header;
@@ -200,7 +200,7 @@ class TestResultsHeader extends StatelessWidget {
   }
 }
 
-class ResultsRow extends StatelessWidget {
+class ResultsRow extends HookWidget {
   const ResultsRow(this.title, this.value, this.units, {super.key});
 
   final String title;

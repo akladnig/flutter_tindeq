@@ -79,8 +79,8 @@ class Rep extends _$Rep {
   bool startTimer = ref.watch(startTimerProvider);
   int repValue = ref.watch(repProvider);
   var currentTestState = ref.watch(currentTestProvider);
-  debugPrint(
-      "${timerState.value} $repValue ${countdown.value} ${currentCountdown.value} ");
+  // debugPrint(
+  //     "${timerState.value} $repValue ${countdown.value} ${currentCountdown.value} ");
 
   //Determine current state based on the elapsed countdown time
   if (startTimer) {
