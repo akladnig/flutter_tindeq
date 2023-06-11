@@ -629,6 +629,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  quick_blue:
+    dependency: "direct main"
+    description:
+      name: quick_blue
+      sha256: "1579f576b998194b752b2286c4a1a469213c9a63d2b66b627d191b38c656ae97"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1+3"
+  quick_blue_macos:
+    dependency: transitive
+    description:
+      name: quick_blue_macos
+      sha256: b4420c9f2517f6c6cb7df075a5c06c2872206ce915699694b69df46420ff494c
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1+2"
+  quick_blue_platform_interface:
+    dependency: transitive
+    description:
+      name: quick_blue_platform_interface
+      sha256: cd38f60936c5e05401d228c55c9d2f67355207d18850bd829fd61c7e75ef860e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2"
+  quick_blue_windows:
+    dependency: transitive
+    description:
+      name: quick_blue_windows
+      sha256: "00db88117cccb35175597c767785d4a0c93e42bf12df1a809735f160c9ec3686"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2+2"
   riverpod:
     dependency: transitive
     description:

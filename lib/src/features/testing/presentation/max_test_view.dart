@@ -48,7 +48,7 @@ class MaxTestView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var maxTests = ref.watch(maxResultsProvider);
+    final maxTests = ref.watch(maxResultsProvider);
 
     const CountDownWidget countdownTime = CountDownWidget(maxTimes);
     return TestView(
