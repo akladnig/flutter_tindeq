@@ -151,7 +151,6 @@ class _TestChartState extends State<TestChart> {
       maxX: widget.duration.toDouble(),
       minY: 0,
       maxY: 60,
-      //TODO: Dot display - round to integer
       lineTouchData: LineTouchData(enabled: true),
       lineBarsData: chartDataList,
     );
@@ -201,7 +200,9 @@ class _TestChartState extends State<TestChart> {
       {colour = ChartColours.dotColor}) {
     List<FlSpot> spotList = [];
     for (var point in points!.toFixed()) {
-      spotList.add(FlSpot(point.$1, point.$2));
+      if (point != (0.0, 0.0)) {
+        spotList.add(FlSpot(point.$1, point.$2));
+      }
     }
     return LineChartBarData(
       // Set barwidth to 0 so that only the spots are drawn

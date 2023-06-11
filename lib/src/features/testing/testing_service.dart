@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:statistics/statistics.dart';
 
 /// Calculate the duration between two points
@@ -8,44 +11,57 @@ double getDuration(point1, point2) {
   return duration;
 }
 
-/// Get the rising and falling edges from a list of data points
+double calcWPrime(PointListClass pointList, double criticalForce) {
+  double wPrime = 0.0;
+  List<double> forceList = pointList.subListByType(ListType.force);
+  List<double> timeList = pointList.subListByType(ListType.time);
+  var durationSum = 0.0;
+  for (var i = 0; i < timeList.length - 2; i++) {
+    var duration = (timeList[i + 1] - timeList[i]);
+    durationSum += duration;
+  }
+  var timeAvg = durationSum / timeList.length;
+  debugPrint("timeAvg $timeAvg");
+  List<double> wPrimeList =
+      forceList.where((force) => force > criticalForce).toList();
+  debugPrint("${wPrimeList.length}");
+
+  wPrime = wPrimeList.reduce((value, point) => value + point - criticalForce) *
+      timeAvg;
+
+  return wPrime;
+}
+
+/// Calculate the mean force and time of each hang based on the
+/// rising and falling edges of a list of data points.
 /// The edges should fall on the boundaries of a hang/rest repeater
 /// cycle of 7secs:3secs
-PointListClass getCftEdges(PointListClass pointList) {
+PointListClass cftMeansList(PointListClass pointList) {
   List<PointListClass> repList = [];
 
-  // Get a list of points that are above the trigger level and within the hangTime
-  // and store that list in the repList
+  // Get a list of points that are above the trigger level and within 0.5sec on
+  //either side of the hangTime and store that list in the repList
+  double errorTime = 0.5;
+  //TODO tidy names
   for (var i = 0; i < cftTimes.reps; i++) {
-    double startTime = (i * (cftTimes.hangTime + cftTimes.restTime)).toDouble();
-    double endTime = startTime + cftTimes.hangTime;
+    double startTime =
+        (i * (cftTimes.hangTime + cftTimes.restTime) - errorTime).toDouble();
+    double endTime = startTime + cftTimes.hangTime + 2 * errorTime;
     PointList newList1 = pointList
-        .where((element) => pointInTimeRange(element, startTime, endTime))
+        .where((point) => isPointInTimeRange(point, startTime, endTime))
         .toList();
-    // debugPrint(newList.toString());
+    debugPrint('$startTime $endTime');
     var newList2 = PointListClass(newList1);
     repList.add(newList2);
   }
 
-  return getMeans(repList);
-}
-
-// A point is in range if it is within the hangTime interval and the force is above the triggerLevel
-bool pointInTimeRange(Point point, double startTime, double endTime) {
-  return (point.$1 > startTime) &
-      (point.$1 < endTime) &
-      (point.$2 > triggerLevel);
-}
-
-// A point is in range if it is within the hangTime interval and the force is above the triggerLevel
-bool pointInForceRange(Point point, double minForce, double maxForce) {
-  return (point.$2 > minForce) & (point.$2 < maxForce);
+  return calculateMeans(repList);
 }
 
 /// Get statistics of a clipped range of data that lies between the rising
 /// and falling edge
 
-PointListClass getMeans(List<PointListClass> repsList) {
+PointListClass calculateMeans(List<PointListClass> repsList) {
   PointList meansList = [];
   for (var pointList in repsList) {
     List<double> forceList = pointList.subListByType(ListType.force);
@@ -58,7 +74,7 @@ PointListClass getMeans(List<PointListClass> repsList) {
     // List<double> sigmaList = [];
     //TODO tidy this up
     PointList sigmaList = pointList
-        .where((element) => pointInForceRange(element, minForce, maxForce))
+        .where((point) => isPointInForceRange(point, minForce, maxForce))
         .toList();
 
     var newList = PointListClass(sigmaList);
@@ -71,12 +87,29 @@ PointListClass getMeans(List<PointListClass> repsList) {
   return newList;
 }
 
-/// Calculate the average mean from the last set of means
+/// Calculate the average mean from the last 60secs of means
 
-double criticalLoad(PointListClass meansList) {
+double criticalForce(PointListClass meansList) {
   int listLength = meansList.length;
-  double criticalLoad = meansList
-      .subListByType(ListType.force, start: listLength - 5, end: listLength - 1)
+  double criticalForce = meansList
+      .subListByType(ListType.force, start: listLength - 6, end: listLength - 1)
       .mean;
-  return criticalLoad;
+  return criticalForce;
+}
+
+CftResult get cftResult {
+  PointListClass meansList = cftMeansList(pointListCft);
+  double asymptoticForce = criticalForce(meansList);
+  double factor = cftHangTime / (cftHangTime + cftRestTime);
+  double wPrime = calcWPrime(pointListCft, asymptoticForce);
+
+  return (
+    criticalForce: asymptoticForce,
+    // criticalForce: asymptoticForce * factor,
+    asymptoticForce: asymptoticForce,
+    peakForce: meansList[0].$2,
+    cftPoints: meansList,
+    wPrime: wPrime,
+    anaerobicFunction: 0
+  );
 }

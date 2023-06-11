@@ -4,15 +4,15 @@ import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
-import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //TODO add ability to do mulitple tests for different grip types - maybe a separate grip tests menu item?
+//TODO calculate max strength based on average of 3 reps of 10 seconds
 class MaxTestingView extends HookWidget {
   const MaxTestingView({super.key});
 
@@ -41,8 +41,6 @@ class MaxTestView extends ConsumerWidget {
   MaxTestView({super.key});
   final PointListClass dataLeft = pointListMaxL;
   final PointListClass dataRight = pointListMaxR;
-  //TODO move to results on test complete
-  final points = [pointListMaxL.maxForce, pointListMaxR.maxForce];
   final legends = [
     (title: "Left", colour: ChartColours.contentColorBlue),
     (title: "Right", colour: ChartColours.contentColorRed)
@@ -50,57 +48,50 @@ class MaxTestView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var maxTests = ref.watch(maxResultsProvider);
+
     const CountDownWidget countdownTime = CountDownWidget(maxTimes);
-    var testComplete = ref.watch(allTestsProvider);
-    debugPrint("results: test complete ${testComplete[Tests.maxTestLeft]}");
     return TestView(
       "Maximum Strength Test",
       dataLeft: dataLeft,
       dataRight: dataRight,
       legends: legends,
       lines: [
-        (dataLeft.meanLine, ChartColours.contentColorBlue),
-        (dataRight.meanLine, ChartColours.contentColorRed)
+        (maxTests[Hand.left].meanLine, ChartColours.contentColorBlue),
+        (maxTests[Hand.right].meanLine, ChartColours.contentColorRed)
       ],
       countdownTime: countdownTime,
       duration: maxTimes.totalDuration,
-      results: Results(
-        (
-          points[0].force,
-          dataLeft.mean.force,
-          points[0].force,
-          dataRight.mean.force,
-        ),
-      ),
+      results: const Results(),
     );
   }
 }
 
-class Results extends ConsumerWidget {
-  const Results(this.values, {super.key});
-//TODO make this a class?
-  final (double, double, double, double) values;
-  //TODO watch for test completion and update results
+class Results extends StatefulHookConsumerWidget {
+  const Results({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var testComplete = ref.watch(allTestsProvider);
-    debugPrint("results: test complete ${testComplete[Tests.maxTestLeft]}");
-    if (testComplete[Tests.maxTestLeft] == TestState.complete) {
-      Future(() => maxAction(Hand.left, ref));
-    }
-    var tests = ref.watch(testResults2Provider);
+  ConsumerState<Results> createState() => _ResultsState();
+}
+
+class _ResultsState extends ConsumerState<Results> {
+  @override
+  Widget build(BuildContext context) {
+    var maxTests = ref.watch(maxResultsProvider);
 
     return Column(
       children: [
-        TestResultsHeader(
-            Tests.maxTestLeft, "Left Hand", () => maxAction(Hand.left, ref)),
-        ResultsBody(
-            (tests[Result.maxStrengthLeft], tests[Result.meanStrengthLeft])),
+        const TestResultsHeader(Tests.maxTestLeft, "Left Hand"),
+        ResultsBody((
+          maxTests[Hand.left].maxStrength,
+          maxTests[Hand.left].meanStrength
+        )),
         gapHMED,
-        TestResultsHeader(
-            Tests.maxTestRight, "Right Hand", () => maxAction(Hand.right, ref)),
-        ResultsBody((values.$3, values.$4))
+        const TestResultsHeader(Tests.maxTestRight, "Right Hand"),
+        ResultsBody((
+          maxTests[Hand.right].maxStrength,
+          maxTests[Hand.right].meanStrength
+        )),
       ],
     );
   }

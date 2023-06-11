@@ -18,11 +18,11 @@ enum AppRoute {
 }
 
 final goRouter = GoRouter(
-  initialLocation: '/userdetials',
+  initialLocation: '/userdetails',
   debugLogDiagnostics: true,
   routes: [
     GoRoute(
-      path: '/userdetials',
+      path: '/userdetails',
       name: AppRoute.user.name,
       pageBuilder: (context, state) {
         return FadeTransitionPage(

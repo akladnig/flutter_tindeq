@@ -10,6 +10,9 @@ import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+NamedPoint fred = (time: 0.0, force: 0.0);
+
+//TODO this needs to have a better name
 class TestingView extends StatelessWidget {
   const TestingView({
     super.key,
@@ -43,6 +46,7 @@ class StartButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //TODO combine/ rationalise
     final tindeqConnected = ref.watch(tindeqConnectedProvider);
     final currentTestState = ref.watch(currentTestProvider);
     final allTests = ref.watch(allTestsProvider);
@@ -57,8 +61,8 @@ class StartButton extends HookConsumerWidget {
     if (!connected) {
       buttonText.value = ButtonState.waiting;
     } else {
-    //   debugPrint(
-    //       "StartButton: $connected $allTests $testKey, ${currentTestState.$1} ${currentTestState.$2}");
+      // debugPrint(
+      //     "StartButton: $allTests $testKey, ${currentTestState.$1} ${currentTestState.$2}");
       if (allTests[testKey] == TestState.notStarted) {
         buttonText.value = ButtonState.start;
         // If the [testKey] test is in progress and current test is complete update
@@ -83,14 +87,14 @@ class StartButton extends HookConsumerWidget {
       padding: const EdgeInsets.fromLTRB(0, Sizes.xSmall, 0, Sizes.xSmall),
       child: ElevatedButton(
         onPressed: () {
-          debugPrint("Start Button Pressed $testKey $currentTestState");
+          // debugPrint("Start Button Pressed $testKey $currentTestState");
           if ((currentTestState.$2 == TestState.notStarted)) {
             buttonText.value = ButtonState.start;
             // When starting a new test:
             // Reset the Reps to 0
             ref.read(repProvider.notifier).reset();
 
-            // Start the timer 
+            // Start the timer
             ref.read(startTimerProvider.notifier).start();
             // set the test status to In Progress
             ref
@@ -185,10 +189,9 @@ class CountDownTime extends StatelessWidget {
 }
 
 class TestResultsHeader extends HookWidget {
-  const TestResultsHeader(this.testKey, this.header, this.action, {super.key});
+  const TestResultsHeader(this.testKey, this.header, {super.key});
   final Tests testKey;
   final String header;
-  final Function() action;
 
   @override
   Widget build(BuildContext context) {
@@ -201,11 +204,13 @@ class TestResultsHeader extends HookWidget {
 }
 
 class ResultsRow extends HookWidget {
-  const ResultsRow(this.title, this.value, this.units, {super.key});
+  const ResultsRow(this.title, this.value, this.units,
+      {this.digits = 1, super.key});
 
   final String title;
   final double value;
   final String units;
+  final int digits;
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +220,7 @@ class ResultsRow extends HookWidget {
       children: [
         Text(title, style: TextStyles.h3),
         Text(
-          "${value.toStringAsFixed(1)} $units",
+          "${value.toStringAsFixed(digits)} $units",
           style: TextStyles.h3,
         ),
       ],
@@ -223,19 +228,24 @@ class ResultsRow extends HookWidget {
   }
 }
 
-class ButtonText extends HookWidget {
-  const ButtonText({
-    this.text = 'Start Testing',
-    super.key,
-  });
-  final String text;
+class GradesResultsRow extends HookWidget {
+  const GradesResultsRow(this.title, this.gradeMin, this.gradeMax, {super.key});
+
+  final String title;
+  final String gradeMin;
+  final String gradeMax;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      //TODO theme colour
-      style: const TextStyle(color: Colors.white),
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: TextStyles.h3),
+        Text(gradeMin, style: TextStyles.h3),
+        Text(" - ", style: TextStyles.h3),
+        Text(gradeMax, style: TextStyles.h3),
+      ],
     );
   }
 }

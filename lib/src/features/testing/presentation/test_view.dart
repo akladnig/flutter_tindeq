@@ -48,6 +48,7 @@ class TestView extends HookWidget {
         Text(testTitle, style: TextStyles.h1Colour),
         Container(
           constraints: const BoxConstraints.expand(height: 600),
+          // Row containing the results column and testchart column
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

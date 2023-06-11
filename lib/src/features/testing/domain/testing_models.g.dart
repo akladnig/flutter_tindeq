@@ -21,14 +21,14 @@ final currentTestProvider =
 );
 
 typedef _$CurrentTest = AutoDisposeNotifier<(Tests, TestState)>;
-String _$allTestsHash() => r'7e858ea242422c68588158d03ac9f416137f39ae';
+String _$allTestsHash() => r'40d7f55dd33cc29736cfe8f541c980d3bacc338b';
 
 /// Holds the status of all the tests
 ///
 /// Copied from [AllTests].
 @ProviderFor(AllTests)
 final allTestsProvider =
-    AutoDisposeNotifierProvider<AllTests, Map<Tests, TestState>>.internal(
+    NotifierProvider<AllTests, Map<Tests, TestState>>.internal(
   AllTests.new,
   name: r'allTestsProvider',
   debugGetCreateSourceHash:
@@ -37,5 +37,5 @@ final allTestsProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$AllTests = AutoDisposeNotifier<Map<Tests, TestState>>;
+typedef _$AllTests = Notifier<Map<Tests, TestState>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

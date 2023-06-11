@@ -4,8 +4,10 @@ import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/breakpoints.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
+import 'package:flutter_tindeq/src/features/analysis/application/analyse_results.dart';
+import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
 
 class AnalysisView extends StatefulWidget {
@@ -48,10 +50,21 @@ class _AnalysisDetailsState extends ConsumerState<AnalysisDetails> {
   Widget build(BuildContext context) {
     // Watch for user and testing changes
     User user = ref.watch(userProvider);
-    TestResults testResults = ref.watch(testResultsProvider);
+    var maxTests = ref.watch(maxResultsProvider);
+    var rfdTests = ref.watch(rfdResultsProvider);
+    var cftTests = ref.watch(cftResultsProvider);
+
+    String gradeMin;
+    String gradeMax;
+    String rfdGradeMin;
+    String rfdGradeMax;
+    String cftGradeMin;
+    String cftGradeMax;
+    (gradeMin, gradeMax) = analyseStrength(ref);
+    (rfdGradeMin, rfdGradeMax) = analyseRfd(ref);
+    (cftGradeMin, cftGradeMax) = analyseCft(ref);
 
     debugPrint(user.weight.toString());
-    debugPrint(testResults.maxStrengthLeft.toString());
     return Container(
       width: Breakpoint.tablet,
       padding: const EdgeInsets.all(20.0),
@@ -63,23 +76,28 @@ class _AnalysisDetailsState extends ConsumerState<AnalysisDetails> {
           gapHMED,
           ResultsRow("Body Weight: ", user.weight, "kg"),
           ResultsRow("Max Strength Left: ",
-              testResults.maxStrengthLeft / user.weight * 100, "%BW"),
+              maxTests[Hand.left].maxStrength / user.weight * 100, digits: 0, "%BW"),
           ResultsRow("Max Strength Right: ",
-              testResults.maxStrengthRight / user.weight * 100, "%BW"),
+              maxTests[Hand.right].maxStrength / user.weight * 100, digits: 0,
+              "%BW"),
           ResultsRow(
-              "Peak Force: ", testResults.peakForce / user.weight * 100, "%BW"),
+              "Peak Force: ", cftTests.peakForce / user.weight * 100, digits: 0,
+              "%BW"),
           ResultsRow("Critical Force: ",
-              testResults.criticalForce / user.weight * 100, "%BW"),
+              cftTests.criticalForce / user.weight * 100, digits: 0,
+              "%BW"),
           ResultsRow(
               "Critical Force: ",
-              testResults.criticalForce / testResults.peakForce * 100,
+              cftTests.criticalForce / cftTests.peakForce * 100,
+              digits: 0,
               "% of Peak Force"),
-          ResultsRow("RFD Left: ", testResults.rfdfLeft, "kg/s"),
-          ResultsRow("RFD Right: ", testResults.rfdRight, "kg/s"),
+          ResultsRow("RFD Left: ", rfdTests[Hand.left].peak, digits: 0, "kg/s"),
+          ResultsRow("RFD Right: ", rfdTests[Hand.right].peak, digits: 0, "kg/s"),
           const Text("Predicted Redpoint Grades", style: TextStyles.h1Colour),
-          const ResultsRow("Max Strength: ", 0.0, ""),
-          const ResultsRow("Endurance: ", 0.0, ""),
-          const ResultsRow("Contact Strength: ", 0.0, ""),
+          //TODO make this a graph view like in my microbiome results and using theCrag colours
+          GradesResultsRow("Max Strength: ", gradeMin, gradeMax),
+          GradesResultsRow("Endurance: ", cftGradeMin, cftGradeMax),
+          GradesResultsRow("Contact Strength: ", rfdGradeMin, rfdGradeMax),
         ],
       ),
     );

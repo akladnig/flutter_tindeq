@@ -1,13 +1,15 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tindeq/src/constants/test_constants.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:statistics/statistics.dart';
 
 part 'testing_models.g.dart';
 
 typedef Point = (double, double);
-typedef NamedPoint = ({double force, double time});
+typedef NamedPoint = ({double time, double force});
 typedef PointList = List<Point>;
 
 /// A line drawn from point to point
@@ -56,7 +58,8 @@ class CurrentTest extends _$CurrentTest {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
+
 /// Holds the status of all the tests
 class AllTests extends _$AllTests {
   final Map<Tests, TestState> _tests = {
@@ -68,11 +71,20 @@ class AllTests extends _$AllTests {
   };
 
   @override
-  Map<Tests, TestState> build() => _tests;
+  Map<Tests, TestState> build() {
+    debugPrint("Alltests Provider");
+    ref.onDispose(() {
+      debugPrint("Alltests disposed");
+    });
+    return _tests;
+  }
 
   setTest(Tests test, TestState testState) {
-    _tests[test] = testState;
-    state = _tests;
+    //Create a new map so that the Map update is notified
+    //- updating and internal member does not result in an update to the map itself
+    Map<Tests, TestState> newMap = Map.of(state);
+    newMap[test] = testState;
+    state = newMap;
   }
 }
 
@@ -97,13 +109,13 @@ class PointListClass extends ListBase<Point> {
     pointList[index] = point;
   }
 
-// Returns a sub list of List<double> of either force or time between the start and end values.
+/// Returns a sub list of List<double> of either force or time between the start and end values.
   List<double> subListByType(
     ListType type, {
     int start = 0,
     int end = 0,
   }) {
-    if ((start == 0) & (end == 0)) {
+    if ((start == 0) && (end == 0)) {
       end = pointList.lastIndex;
     }
     // Do some out of bounds error checking
@@ -153,8 +165,10 @@ class PointListClass extends ListBase<Point> {
     return (risingIndex, fallingIndex);
   }
 
+  
+
   /// Get the maximum value from a list of data points
-  NamedPoint get maxForce {
+  NamedPoint get maxStrength {
     Point max = (0.0, 0.0);
     for (var point in pointList) {
       max = (point.$2 > max.$2) ? point : max;
@@ -168,21 +182,22 @@ class PointListClass extends ListBase<Point> {
 
     List<double> forceList =
         subListByType(ListType.force, start: risingIndex, end: fallingIndex);
+
     var statistics = forceList.statistics;
     // Calculate the 1 Sigma mean by deleting those values from the list.
     double minForce = statistics.mean - statistics.standardDeviation;
     double maxForce = statistics.mean + statistics.standardDeviation;
 
     List<double> sigmaList = [];
-    for (var i = 0; i < pointList.length - 1; i++) {
-      if ((pointList[i].$2 > minForce) && (pointList[i].$2 < maxForce)) {
-        sigmaList.add(pointList[i].$2);
+    for (var i = 0; i < forceList.length - 1; i++) {
+      if ((forceList[i] > minForce) && (forceList[i] < maxForce)) {
+        sigmaList.add(forceList[i]);
       }
     }
+    
     var sigmaStatistics = sigmaList.statistics;
 
-    double meanTime =
-        pointList[risingIndex + sigmaStatistics.medianHighIndex].$1;
+    double meanTime = forceList[risingIndex + sigmaStatistics.medianHighIndex];
     return ((force: sigmaStatistics.mean, time: meanTime));
   }
 
@@ -196,35 +211,79 @@ class PointListClass extends ListBase<Point> {
     return line;
   }
 
-  /// Get the Minimum and Maximum RFD from a list of data points
+  MaxResult get maxResult {
+    return (
+      maxStrength: maxStrength.force,
+      meanStrength: mean.force,
+      meanLine: meanLine
+    );
+  }
 
-  (double, Point, Point) get rfdMinMax {
+  /// Get the Maximum RFD from the rising edge of a list of data points
+
+  double get rfdPeak {
     int risingIndex = 0;
 
     (risingIndex, _) = getEdge;
     Point rfdRisingPointStart = pointList[risingIndex];
     Point rfdRisingPointEnd = pointList[risingIndex + 1];
-    double rfdMax = (rfdRisingPointEnd.$2 - rfdRisingPointStart.$2) /
+    double rfdPeak = (rfdRisingPointEnd.$2 - rfdRisingPointStart.$2) /
         (pointList[risingIndex + 1].$1 - rfdRisingPointStart.$1);
-    return (rfdMax, rfdRisingPointStart, rfdRisingPointEnd);
+    return rfdPeak;
+  }
+
+  /// Get the point at which hte rfdPeak occurs
+  Point get rfdPeakPoint {
+    int risingIndex = 0;
+
+    (risingIndex, _) = getEdge;
+    Point rfdRisingPointStart = pointList[risingIndex];
+    return rfdRisingPointStart;
   }
 
   /// Create a line that runs from 10% to 90% of the max and running through the
   /// Rfd Max point
   Line get rfdLine {
-    var maxValue = maxForce;
-    var (_, maxRfdPoint1, maxRfdPoint2) = rfdMinMax;
+    int risingIndex = 0;
+
+    (risingIndex, _) = getEdge;
+    var maxValue = maxStrength;
+    Point maxRfdPoint1 = pointList[risingIndex];
+    Point maxRfdPoint2 = pointList[risingIndex + 1];
     var maxLineParameters = lineParameters(maxRfdPoint1, maxRfdPoint2);
     // Get the 10% x value from x = (y - b)/a
     var xMin =
         (maxValue.force * 0.1 - maxLineParameters.$2) / maxLineParameters.$1;
     var minPoint = (xMin, maxValue.force * 0.1);
-    // Get the 80% x value from x = (y - b)/a
+    // Get the 90% x value from x = (y - b)/a
     var xMax =
-        (maxValue.force * 0.8 - maxLineParameters.$2) / maxLineParameters.$1;
-    var maxPoint = (xMax, maxValue.force * 0.8);
+        (maxValue.force * 0.9 - maxLineParameters.$2) / maxLineParameters.$1;
+    var maxPoint = (xMax, maxValue.force * 0.9);
     Line line = (minPoint, maxPoint);
     return line;
+  }
+
+  get rfdAverage {
+    Point maxValue = (maxStrength.time, maxStrength.force);
+
+    Point max20 =
+        pointList.firstWhere((point) => point.$2 >= maxValue.$2 * 0.2);
+    Point max80 =
+        pointList.firstWhere((point) => point.$2 >= maxValue.$2 * 0.8);
+
+    double average = (max80.$2 - max20.$2) / (max80.$1 - max20.$1);
+
+    return average;
+  }
+
+  RfdResult get rfdResult {
+    return (
+      peak: rfdPeak,
+      peakPoint: rfdPeakPoint,
+      peakLine: rfdLine,
+      mean: rfdAverage,
+      timeToPeak: 0.0,
+    );
   }
 
   /// Calculate the parameters [a, b] of a line running through two points
@@ -247,4 +306,17 @@ class PointListClass extends ListBase<Point> {
     }
     return (fixedList);
   }
+
+}
+
+// A point is in range if it is within the hangTime interval and the force is above the triggerLevel
+bool isPointInTimeRange(Point point, double startTime, double endTime) {
+  return (point.$1 > startTime) &&
+      (point.$1 < endTime) &&
+      (point.$2 > triggerLevel);
+}
+
+// A point is in range if it is within the hangTime interval and the force is above the triggerLevel
+bool isPointInForceRange(Point point, double minForce, double maxForce) {
+  return (point.$2 > minForce) && (point.$2 < maxForce);
 }

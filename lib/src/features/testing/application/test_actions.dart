@@ -1,40 +1,54 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_tindeq/src/features/testing/application/countdown_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
 
-//TODO
-void maxAction(hand, ref) {
-  switch (hand) {
-    case Hand.left:
-      ref
-          .read(testResults2Provider.notifier)
-          .setResult(Result.maxStrengthLeft, pointListMaxL.maxForce.force);
-      ref.read(testResultsProvider).meanStrengthLeft = pointListMaxL.mean.force;
-    case Hand.right:
-      ref
-          .read(testResults2Provider.notifier)
-          .setResult(Result.maxStrengthRight, pointListMaxL.maxForce.force);
-      ref.read(testResultsProvider).maxStrengthRight =
-          pointListMaxR.maxForce.force;
+void analyseResults(Tests currentTest, WidgetRef ref) {
+  switch (currentTest) {
+    case Tests.maxTestLeft || Tests.maxTestRight:
+      Future(() => maxAction(currentTest, ref));
+    case Tests.rfdTestLeft || Tests.rfdTestRight:
+      Future(() => rfdAction(currentTest, ref));
+    case Tests.cftTest:
+      Future(() => cftAction(ref));
+    default:
+    //TODO handle this error state
   }
 }
 
 //TODO
-rfdAction(hand, ref) {
-  PointListClass meansList = getCftEdges(pointListCft);
-  ref.read(testResultsProvider).peakForce = meansList[0].$2;
-  ref.read(testResultsProvider).criticalForce = criticalLoad(meansList);
+void maxAction(Tests currentTest, WidgetRef ref) {
+  switch (currentTest) {
+    case Tests.maxTestLeft:
+      ref
+          .read(maxResultsProvider.notifier)
+          .setResult(Hand.left, pointListMaxL.maxResult);
+    case Tests.maxTestRight:
+      ref
+          .read(maxResultsProvider.notifier)
+          .setResult(Hand.right, pointListMaxR.maxResult);
+    default:
+    //TODO handle this error state
+  }
 }
 
-cftAction(ref) {
-  PointListClass meansList = getCftEdges(pointListCft);
-  ref.read(testResultsProvider).peakForce = meansList[0].$2;
-  ref.read(testResultsProvider).criticalForce = criticalLoad(meansList);
-  ref.read(startTimerProvider.notifier).start();
+//TODO
+rfdAction(Tests currentTest, WidgetRef ref) {
+  switch (currentTest) {
+    case Tests.rfdTestLeft:
+      //TODO Make this a single class?
+      ref
+          .read(rfdResultsProvider.notifier)
+          .setResult(Hand.left, pointListRfdL.rfdResult);
+    case Tests.rfdTestRight:
+      ref
+          .read(rfdResultsProvider.notifier)
+          .setResult(Hand.right, pointListRfdR.rfdResult);
+    default:
+  }
+}
 
-  debugPrint(
-      "cftAction: ${ref.watch(testResultsProvider).peakForce.toString()}");
+cftAction(WidgetRef ref) {
+  ref.read(cftResultsProvider.notifier).setResult(cftResult);
 }

@@ -2,24 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
-import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
-import 'package:flutter_tindeq/src/features/testing/repository/test_results.dart';
-import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-//TODO put this into common widgets - pass as parameter from appRouter
 class CftTestingView extends HookConsumerWidget {
   const CftTestingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //TODO also called by CftAction
-    PointListClass meansList = getCftEdges(pointListCft);
-    var testResults = ref.watch(testResultsProvider);
+    var cftTests = ref.watch(cftResultsProvider);
 
     return Scaffold(
       // appBar: const PreferredSize(
@@ -34,17 +29,16 @@ class CftTestingView extends HookConsumerWidget {
               child: TestView(
                 "Critical Force Test",
                 dataLeft: pointListCft,
-                points: meansList,
+                points: cftTests.cftPoints,
                 lines: [
-                  // (
-                  //   (
-                  //     (0.0, testResults.criticalForce),
-                  //     (240.0, testResults.criticalForce)
-                  //   ),
-                  //   ChartColours.contentColorRed
-                  // )
+                  (
+                    (
+                      (0.0, cftTests.criticalForce),
+                      (240.0, cftTests.criticalForce)
+                    ),
+                    ChartColours.contentColorRed
+                  )
                 ],
-                // startButton: const StartButton(),
                 results: const Results(),
                 countdownTime: const CountDownWidget(cftTimes),
                 duration: cftTimes.totalDuration,
@@ -62,29 +56,17 @@ class Results extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var testResults = ref.watch(testResultsProvider);
-    var bs = ButtonStyle(
-      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-        (Set<MaterialState> states) {
-          return null; // Use the component's default.
-        },
-      ),
-    );
+    var cftTests = ref.watch(cftResultsProvider);
+
     return Column(
       children: [
-        ElevatedButton(
-            style: bs,
-            onPressed: () {
-              cftAction(ref);
-              // setState(() {});
-            },
-            child: const ButtonText(text: "Start Test")),
-        // ResultsRow("Peak Load:", testResults.peakForce, "kg"),
-        // ResultsRow("Critical Load:", testResults.criticalForce, "kg"),
-        //TODO
-        const ResultsRow("Asymptotic Load:", 0, "kg"),
-        const ResultsRow("W':", 0, "J"),
-        const ResultsRow("Anaerobic Function Score:", 0, ""),
+        const StartButton(Tests.cftTest),
+        ResultsRow("Peak Load:", cftTests.peakForce, "kg"),
+        ResultsRow("Critical Load:", cftTests.criticalForce, "kg"),
+        ResultsRow("Asymptotic Load:", cftTests.asymptoticForce, "kg"),
+        ResultsRow("W':", cftTests.wPrime, digits: 0, "J"),
+        ResultsRow("Anaerobic Function Score:",
+            cftTests.wPrime / cftTests.criticalForce, ""),
       ],
     );
   }

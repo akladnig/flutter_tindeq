@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
 import 'package:flutter_tindeq/src/routing/app_router.dart';
 
 import 'settings/settings_controller.dart';

@@ -31,7 +31,7 @@ class _UserDetailsViewState extends State<UserDetailsView> {
     );
   }
 }
-
+//TODO fix persistance slider values etc
 class UserDetails extends ConsumerStatefulWidget {
   const UserDetails({super.key});
 
@@ -69,7 +69,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             ),
             onChanged: (value) {
               ref.read(userProvider).userName = value;
-              setState(() {});
             },
           ),
           Column(
@@ -128,7 +127,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                   label: user.edgeSize.round().toInt().toString(),
                   onChanged: (value) {
                     ref.read(userProvider).edgeSize = value.toInt();
-                    setState(() {});
                   }),
             ],
           ),
@@ -141,7 +139,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             ),
             onChanged: (value) {
               ref.read(userProvider).notes = value;
-              setState(() {});
             },
           ),
           Column(

@@ -1,4 +1,4 @@
-const int countdownTime = 4;
+const int countdownTime = 10;
 
 typedef TestTimes = ({int countdownTime, int hangTime, int restTime, int reps, int totalDuration});
 
@@ -16,7 +16,7 @@ const TestTimes cftTimes = (
   totalDuration: cftTotalDuration
 );
 
-const int maxHangTime = 4;
+const int maxHangTime = 10;
 const int maxRestTime = 1;
 const int maxRepetitions = 1;
 const int maxTotalDuration =
@@ -30,7 +30,7 @@ const TestTimes maxTimes = (
 
 );
 
-const int rfdHangTime = 5;
+const int rfdHangTime = 10;
 const int rfdRestTime = 1;
 const int rfdRepetitions = 1;
 const int rfdTotalDuration =

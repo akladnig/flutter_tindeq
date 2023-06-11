@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/features/testing/application/sound_helper.dart';
+import 'package:flutter_tindeq/src/features/testing/application/test_actions.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/countdown_model.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,7 +14,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'countdown_controller.g.dart';
 
 void useTimer(VoidCallback callback, startTimer) {
-  Duration? tick = const Duration(seconds: 1);
+  Duration? tick = const Duration(milliseconds: 20);
   final savedCallback = useRef<VoidCallback>(() => {});
   // ignore: body_might_complete_normally_nullable
   useEffect(() {
@@ -74,7 +75,8 @@ class Rep extends _$Rep {
   TestTimes testTimes,
   WidgetRef ref,
 ) {
-  int totalDuration = testTimes.countdownTime + (testTimes.hangTime + testTimes.restTime) * testTimes.reps;
+  int totalDuration = testTimes.countdownTime +
+      (testTimes.hangTime + testTimes.restTime) * testTimes.reps;
 
   bool startTimer = ref.watch(startTimerProvider);
   int repValue = ref.watch(repProvider);
@@ -84,12 +86,16 @@ class Rep extends _$Rep {
 
   //Determine current state based on the elapsed countdown time
   if (startTimer) {
+    // Play 3 second beep countdown at the end of:
+    // - Countdown
+    // - Hang and
+    // - Rest periods
     if (isInCountdown(timerState, countdown, testTimes) |
         isInHang(timerState, countdown, repValue, testTimes) |
         isInRest(timerState, countdown, repValue, testTimes)) {
       playBeeps(currentCountdown.value);
     }
-    if ((timerState.value == TimerState.complete) & startTimer) {
+    if ((timerState.value == TimerState.complete) && startTimer) {
       timerState.value = TimerState.idle;
       currentCountdown.value = testTimes.countdownTime;
     } else if ((timerState.value == TimerState.idle)) {
@@ -101,10 +107,15 @@ class Rep extends _$Rep {
       timerState.value = TimerState.countdown;
       currentCountdown.value = testTimes.countdownTime;
     } else if (countdown.value >= (totalDuration)) {
+      // If countdown is complete reset the countdown times
+      // Reset the Startimer provider
+      // Mark the current test as complete
+      // and start the results analysis
       currentCountdown.value = 0;
       countdown.value = 0;
       timerState.value = TimerState.complete;
       Future(() => ref.read(startTimerProvider.notifier).end());
+      analyseResults(currentTestState.$1, ref);
       Future(() => ref
           .read(currentTestProvider.notifier)
           .setTest(currentTestState.$1, TestState.complete));
@@ -119,12 +130,13 @@ class Rep extends _$Rep {
       currentCountdown.value = testTimes.restTime;
     }
   }
-  
+
   return (timerState, currentCountdown);
 }
 
 int startHangTime(Period period, int repValue, testTimes) {
-  return testTimes.countdownTime + (testTimes.hangTime + testTimes.restTime) * (repValue - period.period);
+  return testTimes.countdownTime +
+      (testTimes.hangTime + testTimes.restTime) * (repValue - period.period);
 }
 
 int endHangTime(Period period, int repValue, testTimes) {
