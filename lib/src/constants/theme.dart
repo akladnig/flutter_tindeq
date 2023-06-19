@@ -10,10 +10,31 @@ bool showDivider = false;
 Color checkColor = Colors.white;
 Color hoverColor = Colors.black26;
 
-const Color primaryColour = Color(0xFFE31317);
+const Color primaryColour = Color(0xFF6243b3);
 const Color primaryColourW300 = Color(0xFFf46c67);
 const Color primaryColourW200 = Color(0xFFfb9792);
 const Color primaryColourW100 = Color(0xFFffcbce);
+
+/* primary */
+const Color primary0 = Color(0xFF000000);
+const Color primary10 = Color(0xFF21005d);
+const Color primary20 = Color(0xFF390f89);
+const Color primary25 = Color(0xFF442094);
+const Color primary30 = Color(0xFF502fa0);
+const Color primary35 = Color(0xFF5c3cac);
+const Color primary40 = Color(0xFF6849b9);
+const Color primary50 = Color(0xFF8163d4);
+const Color primary60 = Color(0xFF9c7df1);
+const Color primary70 = Color(0xFFb59cff);
+const Color primary80 = Color(0xFFcfbdff);
+const Color primary90 = Color(0xFFe8ddff);
+const Color primary95 = Color(0xFFf5eeff);
+const Color primary98 = Color(0xFFfdf7ff);
+const Color primary99 = Color(0xFFfffbff);
+const Color primary100 = Color(0xFFffffff);
+
+const Color menuColour = Colors.blue;
+const Color headerColour = Colors.blue;
 
 class ChartColours {
   static const Color primary = ChartColours.contentColorCyan;
@@ -69,23 +90,16 @@ class TextStyles {
   static const TextStyle raleway = TextStyle(
     fontFamily: Fonts.raleway,
   );
-  static TextStyle buttonText1 = const TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: Sizes.medium,
-  );
-  static TextStyle buttonText2 = const TextStyle(
-    fontWeight: FontWeight.normal,
-    fontSize: Sizes.medium,
-  );
+  // Header Styles
   static TextStyle h1 = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: Sizes.extraLarge,
+    fontSize: Sizes.xLarge,
     color: foregroundColour,
   );
-  static const TextStyle h1Colour = TextStyle(
+  static TextStyle h1Colour = const TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: Sizes.extraLarge,
-    color: Colors.blue,
+    fontSize: Sizes.xLarge,
+    color: headerColour,
   );
   static TextStyle h2 = TextStyle(
     fontWeight: FontWeight.bold,
@@ -97,12 +111,14 @@ class TextStyles {
     fontSize: Sizes.medium,
     color: foregroundColour,
   );
+  // Body Styles
   static TextStyle body = TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: Sizes.medium,
     height: 1.4,
     color: foregroundColour,
   );
+  // Height of 1 to allow precise positioning of text
   static TextStyle bodyHeightSmall = TextStyle(
     fontWeight: FontWeight.normal,
     fontSize: Sizes.medium,
@@ -133,22 +149,90 @@ class TextStyles {
     height: 1.4,
     color: Colors.red,
   );
-  static TextStyle trExample = TextStyle(
+  static const TextStyle grade = TextStyle(
     fontWeight: FontWeight.normal,
-    fontStyle: FontStyle.italic,
-    fontSize: Sizes.medium,
+    fontSize: Sizes.small,
     height: 1.4,
-    color: foregroundColour,
+    color: Colors.black45,
   );
-  static TextStyle trExampleHighlight = const TextStyle(
+  // Navigation Menu Styles
+  static const TextStyle unselectedText = TextStyle(
     fontWeight: FontWeight.normal,
-    fontStyle: FontStyle.italic,
-    fontSize: Sizes.medium,
+    fontSize: Sizes.small,
     height: 1.4,
-    backgroundColor: primaryColourW200,
+    color: Colors.white60,
+  );
+  static const TextStyle selectedText = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: Sizes.small,
+    height: 1.4,
+    color: menuColour,
+  );
+  // Button Styles
+  static TextStyle buttonTextBold = const TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: Sizes.medium,
+  );
+  static TextStyle buttonText = const TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: Sizes.medium,
   );
   static TextStyle body1 = raleway.copyWith(color: const Color(0xFF42A5F5));
   // etc
+}
+
+// Countdown Timer styling
+class CountdownTimerStyle extends TextStyle {
+  const CountdownTimerStyle(this.timerColour);
+  final Color timerColour;
+
+  TextStyle get count {
+    return TextStyle(
+      fontFamily: 'B612Mono',
+      fontWeight: FontWeight.bold,
+      fontSize: Sizes.small * 10,
+      backgroundColor: timerColour,
+      // height: 1.0,
+      color: foregroundColour,
+    );
+  }
+}
+
+// Grade Gauge and Weight Gauge styling
+class GaugeStyle {
+  static const TextStyle number = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: Sizes.medium,
+    height: 1.0,
+    color: Colors.white,
+  );
+
+  static const TextStyle legend = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontSize: Sizes.medium,
+    height: 1.0,
+    color: Colors.white54,
+  );
+
+  static Paint circlePaint = Paint()
+    ..color = const Color.fromARGB(240, 30, 130, 240)
+    ..style = PaintingStyle.fill
+    ..strokeWidth = 2;
+
+  static Paint weightBarpaint = Paint()
+    ..color = Colors.white10
+    ..style = PaintingStyle.fill
+    ..strokeWidth = 2;
+
+  static Paint rangeBarPaint = Paint()
+    ..color = const Color.fromARGB(140, 30, 130, 240)
+    ..style = PaintingStyle.fill
+    ..strokeWidth = 2;
+
+  static Paint tickPaint = Paint()
+    ..color = Colors.white12
+    ..style = PaintingStyle.fill
+    ..strokeWidth = 2;
 }
 
 //
@@ -182,7 +266,7 @@ ThemeData theme(bool isDarkTheme) {
       suffixIconColor: foregroundColour,
       border: const OutlineInputBorder(
         // Border radius set to height x0.8
-        borderRadius: BorderRadius.all(Radius.circular(Sizes.xxLarge)),
+        borderRadius: BorderRadius.all(Radius.circular(Sizes.x2Large)),
         borderSide: BorderSide(width: 0, style: BorderStyle.none),
       ),
     ),

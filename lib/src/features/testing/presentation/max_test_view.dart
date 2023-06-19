@@ -79,20 +79,37 @@ class _ResultsState extends ConsumerState<Results> {
   Widget build(BuildContext context) {
     var maxTests = ref.watch(maxResultsProvider);
 
-    return Column(
-      children: [
-        const TestResultsHeader(Tests.maxTestLeft, "Left Hand"),
-        ResultsBody((
-          maxTests[Hand.left].maxStrength,
-          maxTests[Hand.left].meanStrength
-        )),
-        gapHMED,
-        const TestResultsHeader(Tests.maxTestRight, "Right Hand"),
-        ResultsBody((
-          maxTests[Hand.right].maxStrength,
-          maxTests[Hand.right].meanStrength
-        )),
-      ],
+    return SizedBox(
+      width: resultsViewWidth,
+      height: plotHeight,
+      child: Column(
+        children: [
+          SizedBox(
+            height: plotHeight / 2,
+            child: Column(
+              children: [
+                const TestResultsHeader(Tests.maxTestLeft, "Left Hand"),
+                ResultsBody((
+                  maxTests[Hand.left].maxStrength,
+                  maxTests[Hand.left].meanStrength
+                )),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: plotHeight / 2,
+            child: Column(
+              children: [
+                const TestResultsHeader(Tests.maxTestRight, "Right Hand"),
+                ResultsBody((
+                  maxTests[Hand.right].maxStrength,
+                  maxTests[Hand.right].meanStrength
+                )),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'countdown_controller.g.dart';
 
 void useTimer(VoidCallback callback, startTimer) {
-  Duration? tick = const Duration(milliseconds: 20);
+  Duration? tick = const Duration(milliseconds: 25);
   final savedCallback = useRef<VoidCallback>(() => {});
   // ignore: body_might_complete_normally_nullable
   useEffect(() {

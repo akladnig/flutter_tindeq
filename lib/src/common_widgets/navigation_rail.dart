@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tindeq/src/constants/app_sizes.dart';
+import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/routing/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_tindeq/src/localization/string_hardcoded.dart';
@@ -23,6 +25,8 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
     return NavigationRail(
       selectedIndex: _selectedIndex,
       groupAlignment: groupAlignment,
+      unselectedLabelTextStyle: TextStyles.unselectedText,
+      selectedLabelTextStyle: TextStyles.selectedText,
       onDestinationSelected: (int index) {
         switch (index) {
           case 0:
@@ -46,17 +50,20 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
           // icon: Icon(Icons.person_2_outlined),
           icon: const Icon(Icons.person),
           selectedIcon: const Icon(Icons.person),
-          label: Text('User Details'.hardcoded),
+          label: Text('User Details'.hardcoded,
+              style: const TextStyle(fontSize: Sizes.medium)),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.timeline),
           selectedIcon: const Icon(Icons.timeline),
-          label: Text('Max Test'.hardcoded),
+          label: Text('Max Test'.hardcoded,
+              style: const TextStyle(fontSize: Sizes.medium)),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.trending_up),
           selectedIcon: const Icon(Icons.trending_up),
-          label: Text('RFD Test'.hardcoded),
+          label: Text('RFD Test'.hardcoded,
+              style: const TextStyle(fontSize: Sizes.medium)),
         ),
         NavigationRailDestination(
           icon: Transform.scale(
@@ -67,12 +74,14 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
             scaleX: -1,
             child: const Icon(Icons.signal_cellular_alt),
           ),
-          label: Text('CFT Test'.hardcoded),
+          label: Text('CFT Test'.hardcoded,
+              style: const TextStyle(fontSize: Sizes.medium)),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.trending_up),
           selectedIcon: const Icon(Icons.trending_up),
-          label: Text('Analysis Results'.hardcoded),
+          label: Text('Analysis Results'.hardcoded,
+              style: const TextStyle(fontSize: Sizes.medium)),
         ),
       ],
     );

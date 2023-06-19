@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
+import 'package:flutter_tindeq/src/common_widgets/text.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
+import 'package:flutter_tindeq/src/features/analysis/presentation/grade_gauge.dart';
+import 'package:flutter_tindeq/src/features/analysis/presentation/weight_gauge.dart';
 import 'package:flutter_tindeq/src/features/testing/application/countdown_controller.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/countdown_model.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
+import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-NamedPoint fred = (time: 0.0, force: 0.0);
 
 //TODO this needs to have a better name
 class TestingView extends StatelessWidget {
@@ -171,18 +173,13 @@ class CountDownTime extends StatelessWidget {
     String timeSecs = time.ceil().toString().padLeft(2, '0');
 
     return Container(
-      width: 400,
+      // width: 400,
       alignment: Alignment.center,
       decoration: BoxDecoration(color: timerState.colour),
       child: Text(
         timeSecs,
         textAlign: TextAlign.right,
-        style: TextStyle(
-            fontFamily: 'B612Mono',
-            fontWeight: FontWeight.bold,
-            fontSize: 200,
-            color: Colors.white,
-            backgroundColor: timerState.colour),
+        style: CountdownTimerStyle(timerState.colour).count,
       ),
     );
   }
@@ -197,7 +194,7 @@ class TestResultsHeader extends HookWidget {
   Widget build(BuildContext context) {
     final startButton = StartButton(testKey);
     return Column(children: [
-      Text(header, style: TextStyles.h1Colour),
+      TextPara(header, style: TextStyles.h1Colour, margin: Sizes.none),
       startButton,
     ]);
   }
@@ -216,13 +213,85 @@ class ResultsRow extends HookWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(title, style: TextStyles.h3),
         Text(
           "${value.toStringAsFixed(digits)} $units",
           style: TextStyles.h3,
         ),
+      ],
+    );
+  }
+}
+
+class GradeResultsGauge extends HookWidget {
+  const GradeResultsGauge(this.title, this.gradeMin, this.gradeMax,
+      {super.key});
+
+  final String title;
+  final int gradeMin;
+  final int gradeMax;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: TextStyles.h2),
+        gapHMED,
+        SizedBox(
+          width: gradeGaugeSizeWidth,
+          height: mainBarHeight + legendOffset + Sizes.medium,
+          child: CustomPaint(
+            painter: GradeGaugePainter(gradeMin, gradeMax),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class WeightResultsGauge extends HookConsumerWidget {
+  const WeightResultsGauge(this.title, this.strength,
+      {this.max,
+      this.showTicks = true,
+      this.showPercentages = true,
+      super.key});
+
+  final String title;
+  final double strength;
+  final double? max;
+  final bool showTicks;
+  final bool showPercentages;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    User user = ref.watch(userProvider);
+
+    double weight = max ?? user.weight;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: weightGaugeSizeWidth,
+          height: showPercentages
+              ? mainBarHeight + labelOffset + Sizes.medium
+              : mainBarHeight,
+          child: CustomPaint(
+            painter: WeightGaugePainter(title,
+                strength: strength,
+                weight: weight,
+                showTicks: showTicks,
+                showPercentages: showPercentages),
+          ),
+        ),
+        gapHMED
       ],
     );
   }
@@ -240,6 +309,7 @@ class GradesResultsRow extends HookWidget {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: TextStyles.h3),
         Text(gradeMin, style: TextStyles.h3),

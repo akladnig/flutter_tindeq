@@ -102,6 +102,7 @@ CftResult get cftResult {
   double asymptoticForce = criticalForce(meansList);
   double factor = cftHangTime / (cftHangTime + cftRestTime);
   double wPrime = calcWPrime(pointListCft, asymptoticForce);
+  double anaerobicFunction = (wPrime > 0) ? wPrime / asymptoticForce : 0;
 
   return (
     criticalForce: asymptoticForce,
@@ -110,6 +111,6 @@ CftResult get cftResult {
     peakForce: meansList[0].$2,
     cftPoints: meansList,
     wPrime: wPrime,
-    anaerobicFunction: 0
+    anaerobicFunction: anaerobicFunction,
   );
 }

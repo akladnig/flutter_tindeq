@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
+import 'package:flutter_tindeq/src/common_widgets/text.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
-import 'package:flutter_tindeq/src/constants/breakpoints.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/analysis/application/analyse_results.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
@@ -48,56 +48,59 @@ class AnalysisDetails extends ConsumerStatefulWidget {
 class _AnalysisDetailsState extends ConsumerState<AnalysisDetails> {
   @override
   Widget build(BuildContext context) {
+
     // Watch for user and testing changes
     User user = ref.watch(userProvider);
     var maxTests = ref.watch(maxResultsProvider);
     var rfdTests = ref.watch(rfdResultsProvider);
     var cftTests = ref.watch(cftResultsProvider);
 
-    String gradeMin;
-    String gradeMax;
-    String rfdGradeMin;
-    String rfdGradeMax;
-    String cftGradeMin;
-    String cftGradeMax;
+    int gradeMin;
+    int gradeMax;
+    int rfdGradeMin;
+    int rfdGradeMax;
+    int cftGradeMin;
+    int cftGradeMax;
     (gradeMin, gradeMax) = analyseStrength(ref);
     (rfdGradeMin, rfdGradeMax) = analyseRfd(ref);
     (cftGradeMin, cftGradeMax) = analyseCft(ref);
 
     debugPrint(user.weight.toString());
     return Container(
-      width: Breakpoint.tablet,
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      // width: mediaWidth,
+      width: gradeGaugeSizeWidth + Sizes.medium,
+      alignment: Alignment.topLeft,
+      padding: const EdgeInsets.all(Sizes.small),
+      child: ListView(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Analysis Results", style: TextStyles.h1Colour),
-          gapHMED,
-          ResultsRow("Body Weight: ", user.weight, "kg"),
-          ResultsRow("Max Strength Left: ",
-              maxTests[Hand.left].maxStrength / user.weight * 100, digits: 0, "%BW"),
-          ResultsRow("Max Strength Right: ",
-              maxTests[Hand.right].maxStrength / user.weight * 100, digits: 0,
-              "%BW"),
-          ResultsRow(
-              "Peak Force: ", cftTests.peakForce / user.weight * 100, digits: 0,
-              "%BW"),
-          ResultsRow("Critical Force: ",
-              cftTests.criticalForce / user.weight * 100, digits: 0,
-              "%BW"),
-          ResultsRow(
-              "Critical Force: ",
-              cftTests.criticalForce / cftTests.peakForce * 100,
-              digits: 0,
-              "% of Peak Force"),
+          TextPara("Analysis Results", style: TextStyles.h1Colour),
+          TextPara(
+              "Your maximum strength shown as a percentage of your body weight",
+              style: TextStyles.body),
+          WeightResultsGauge(
+              "Max Strength Left (kg)", maxTests[Hand.left].maxStrength,
+              showPercentages: false),
+          WeightResultsGauge(
+              "Max Strength Right (kg)", maxTests[Hand.right].maxStrength),
+          TextPara(
+              "The peak force and critical force shown as a percentage of your body weight",
+              style: TextStyles.body),
+          WeightResultsGauge("Peak Force (kg)", cftTests.peakForce,
+              showPercentages: false),
+          WeightResultsGauge("Critical Force (kg)", cftTests.criticalForce),
+          TextPara("The peak force as a percentage of critical force",
+              style: TextStyles.body),
+          WeightResultsGauge("Critical Force % of Peak", cftTests.criticalForce,
+              max: cftTests.peakForce),
           ResultsRow("RFD Left: ", rfdTests[Hand.left].peak, digits: 0, "kg/s"),
-          ResultsRow("RFD Right: ", rfdTests[Hand.right].peak, digits: 0, "kg/s"),
-          const Text("Predicted Redpoint Grades", style: TextStyles.h1Colour),
-          //TODO make this a graph view like in my microbiome results and using theCrag colours
-          GradesResultsRow("Max Strength: ", gradeMin, gradeMax),
-          GradesResultsRow("Endurance: ", cftGradeMin, cftGradeMax),
-          GradesResultsRow("Contact Strength: ", rfdGradeMin, rfdGradeMax),
+          ResultsRow(
+              "RFD Right: ", rfdTests[Hand.right].peak, digits: 0, "kg/s"),
+          TextPara("Predicted Redpoint Grades", style: TextStyles.h1Colour),
+          GradeResultsGauge("Max Strength", gradeMin, gradeMax),
+          GradeResultsGauge("Endurance", cftGradeMin, cftGradeMax),
+          GradeResultsGauge("Contact Strength", rfdGradeMin, rfdGradeMax),
         ],
       ),
     );

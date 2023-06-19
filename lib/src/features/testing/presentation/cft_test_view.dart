@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
+import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
@@ -58,16 +59,19 @@ class Results extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var cftTests = ref.watch(cftResultsProvider);
 
-    return Column(
-      children: [
-        const StartButton(Tests.cftTest),
-        ResultsRow("Peak Load:", cftTests.peakForce, "kg"),
-        ResultsRow("Critical Load:", cftTests.criticalForce, "kg"),
-        ResultsRow("Asymptotic Load:", cftTests.asymptoticForce, "kg"),
-        ResultsRow("W':", cftTests.wPrime, digits: 0, "J"),
-        ResultsRow("Anaerobic Function Score:",
-            cftTests.wPrime / cftTests.criticalForce, ""),
-      ],
+    return SizedBox(
+      width: resultsViewWidth,
+      height: plotHeight,
+      child: Column(
+        children: [
+          const StartButton(Tests.cftTest),
+          ResultsRow("Peak Load: ", cftTests.peakForce, "kg"),
+          ResultsRow("Critical Load: ", cftTests.criticalForce, "kg"),
+          ResultsRow("Asymptotic Load: ", cftTests.asymptoticForce, "kg"),
+          ResultsRow("W': ", cftTests.wPrime, digits: 0, "J"),
+          ResultsRow("Anaerobic Function: ", cftTests.anaerobicFunction, ""),
+        ],
+      ),
     );
   }
 }

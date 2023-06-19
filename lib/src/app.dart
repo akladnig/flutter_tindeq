@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/routing/app_router.dart';
-
 import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
-class MyApp extends ConsumerWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key, required this.settingsController});
 
   final SettingsController settingsController;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<MyApp> createState() => _MyAppState();
+}
 
-
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
     //
     // The AnimatedBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
+
     return AnimatedBuilder(
-      animation: settingsController,
+      animation: widget.settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp.router(
           routerConfig: goRouter,
@@ -51,7 +53,7 @@ class MyApp extends ConsumerWidget {
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           // themeMode: ThemeMode.light,
-          themeMode: settingsController.themeMode,
+          themeMode: widget.settingsController.themeMode,
           // Remove the debug banner
           debugShowCheckedModeBanner: false,
         );

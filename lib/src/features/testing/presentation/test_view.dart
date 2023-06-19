@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_tindeq/src/common_widgets/text.dart';
+import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_chart_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
@@ -36,46 +38,36 @@ class TestView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO get this from a provider
     double mediaWidth = MediaQuery.of(context).size.width;
     debugPrint(mediaWidth.toString());
     // var resultsWidth = mediaWidth * 0.3;
     var plotWidth = mediaWidth * 0.6;
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(
+          vertical: Sizes.medium, horizontal: Sizes.medium),
       children: <Widget>[
-        const SizedBox(height: 80.0),
         // Title of the test
-        Text(testTitle, style: TextStyles.h1Colour),
-        Container(
-          constraints: const BoxConstraints.expand(height: 600),
-          // Row containing the results column and testchart column
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        //  Displays the results
-                        children: [results],
-                      ),
-                      // Displays the count down timer
-                      countdownTime,
-                    ],
-                  ),
-                ),
+        TextPara(testTitle, style: TextStyles.h1Colour, margin: Sizes.medium),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.fromLTRB(Sizes.small, 0, Sizes.xxSmall, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [results],
               ),
-              // Plot the Test Chart
-              Container(
+            ),
+            // Plot the Test Chart
+            Expanded(
+              child: Container(
                 alignment: Alignment.center,
                 width: plotWidth,
-                height: 400,
+                // height: plotHeight,
                 child: TestChart(
                   legends: legends,
                   dataLeft: dataLeft,
@@ -84,10 +76,11 @@ class TestView extends HookWidget {
                   points: points,
                   lines: lines,
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
+        countdownTime,
       ],
     );
   }

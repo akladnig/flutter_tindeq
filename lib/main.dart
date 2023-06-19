@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/features/testing/application/sound_helper.dart';
+import 'package:flutter_tindeq/src/features/tindeq/tindeq.dart';
 import 'package:flutter_tindeq/src/localization/string_hardcoded.dart';
 
 import 'src/app.dart';
@@ -9,6 +11,7 @@ import 'src/settings/settings_controller.dart';
 import 'src/settings/settings_service.dart';
 
 void main() async {
+  debugPaintSizeEnabled = false;
   WidgetsFlutterBinding.ensureInitialized();
   // * Register error handlers. For more info, see:
   // * https://docs.flutter.dev/testing/errors
@@ -26,6 +29,7 @@ void main() async {
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
+  tindeqTest();
   runApp(ProviderScope(child: MyApp(settingsController: settingsController)));
 }
 

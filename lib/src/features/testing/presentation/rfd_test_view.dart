@@ -84,22 +84,39 @@ class _ResultsState extends ConsumerState<Results> {
   Widget build(BuildContext context) {
     var rfdTests = ref.watch(rfdResultsProvider);
 
-    return Column(
-      children: [
-        const TestResultsHeader(Tests.rfdTestLeft, "Left Hand"),
-        ResultsBody((
-          rfdTests[Hand.left].peak,
-          rfdTests[Hand.left].mean,
-          rfdTests[Hand.left].timeToPeak
-        )),
-        gapHMED,
-        const TestResultsHeader(Tests.rfdTestRight, "Right Hand"),
-        ResultsBody((
-          rfdTests[Hand.right].peak,
-          rfdTests[Hand.right].mean,
-          rfdTests[Hand.right].timeToPeak
-        ))
-      ],
+    return SizedBox(
+      width: resultsViewWidth,
+      height: plotHeight,
+      child: Column(
+        children: [
+          SizedBox(
+            height: plotHeight / 2,
+            child: Column(
+              children: [
+                const TestResultsHeader(Tests.rfdTestLeft, "Left Hand"),
+                ResultsBody((
+                  rfdTests[Hand.left].peak,
+                  rfdTests[Hand.left].mean,
+                  rfdTests[Hand.left].timeToPeak
+                )),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: plotHeight / 2,
+            child: Column(
+              children: [
+                const TestResultsHeader(Tests.rfdTestRight, "Right Hand"),
+                ResultsBody((
+                  rfdTests[Hand.right].peak,
+                  rfdTests[Hand.right].mean,
+                  rfdTests[Hand.right].timeToPeak
+                )),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -113,8 +130,8 @@ class ResultsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ResultsRow("Peak: ", values.$1!, digits: 0,  "kg/s"),
-        ResultsRow("Average ", values.$2!, digits: 0, "kg/s"),
+        ResultsRow("Peak: ", values.$1!, digits: 0, "kg/s"),
+        ResultsRow("Average: ", values.$2!, digits: 0, "kg/s"),
         ResultsRow("Time to RFD: ", values.$3!, digits: 0, "ms"),
       ],
     );
