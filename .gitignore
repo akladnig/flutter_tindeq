@@ -42,3 +42,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+ios/Flutter/Generated 3.xcconfig
+ios/Flutter/flutter_export_environment 3.sh
+ios/Flutter/flutter_export_environment 4.sh
