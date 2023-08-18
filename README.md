@@ -1,30 +1,19 @@
-# flutter_tindeq
+# Flutter Tindeq Progressor Climbing Strength Tester
 
-A new Flutter project.
+A Flutter application to run climbing strength tests that can store and visualise results.
 
-## Getting Started
+![[screenshot1.png]]
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
+![[screenshot2.png]]
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The application is currently in development and so far only the initial UI has been developed. I'm using dummy data generated from my Python version of this application.
 
-## Assets
+I have forked QuickBlue and got that running with the Tindeq Progressor so now I need to integrate the two.
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
-
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
-
-## Localization
-
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
-
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+My next steps for this project are:
+- [ ] Move Quickblue into the Tindeq folder
+- [ ] Integrate Quickblue as a Riverpod Stream
+- [ ] Add Isar to store user results
+- [ ] Add an analysis screen to review user data
+- [ ] Add trending analysis of individual user data
+- [ ] Add analysis of all user data and correlate against actual climbing grades
