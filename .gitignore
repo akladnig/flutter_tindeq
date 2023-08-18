@@ -45,3 +45,4 @@ app.*.map.json
 ios/Flutter/Generated 3.xcconfig
 ios/Flutter/flutter_export_environment 3.sh
 ios/Flutter/flutter_export_environment 4.sh
+.obsidian
