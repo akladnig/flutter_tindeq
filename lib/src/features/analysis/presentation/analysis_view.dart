@@ -48,7 +48,6 @@ class AnalysisDetails extends ConsumerStatefulWidget {
 class _AnalysisDetailsState extends ConsumerState<AnalysisDetails> {
   @override
   Widget build(BuildContext context) {
-
     // Watch for user and testing changes
     User user = ref.watch(userProvider);
     var maxTests = ref.watch(maxResultsProvider);
