@@ -2,9 +2,9 @@
 
 A Flutter application to run climbing strength tests that can store and visualise results.
 
-![screenshot1.png](screenshot1.png)
+![screenshot1.png](/assets/images/screenshot1.png)
 
-![[screenshot2.png]]
+![screenshot2.png](/assets/images/screenshot2.png)>)
 
 The application is currently in development and so far only the initial UI has been developed. I'm using dummy data generated from my Python version of this application.
 
