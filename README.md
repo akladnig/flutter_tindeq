@@ -2,7 +2,7 @@
 
 A Flutter application to run climbing strength tests that can store and visualise results.
 
-![[screenshot1.png]]
+![screenshot1.png](screenshot1.png)
 
 ![[screenshot2.png]]
 
