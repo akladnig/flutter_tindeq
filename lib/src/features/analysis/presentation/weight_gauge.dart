@@ -28,10 +28,10 @@ class WeightGaugePainter extends CustomPainter {
     // Draw the weight bar
     var roundedRectangle = RRect.fromRectAndRadius(
         Rect.fromCenter(
-            center: Offset(weightBarWidth / 2, weightBarHeight / 2),
+            center: const Offset(weightBarWidth / 2, weightBarHeight / 2),
             width: weightBarWidth,
             height: weightBarHeight),
-        Radius.circular(weightBarHeight / 2));
+        const Radius.circular(weightBarHeight / 2));
     canvas.drawRRect(roundedRectangle, GaugeStyle.weightBarpaint);
 
     double prevWidth = 0;

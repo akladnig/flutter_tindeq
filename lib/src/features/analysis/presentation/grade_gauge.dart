@@ -47,7 +47,7 @@ class GradeGaugePainter extends CustomPainter {
           gradeStyle,
           TextAlign.left,
           Grade.beginner.startGrade.toInt().toString(),
-          Size(gradeRectWidth, Sizes.medium),
+          const Size(gradeRectWidth, Sizes.medium),
           Offset(xOrigin - gradeRectWidth / 4,
               yOrigin + mainBarHeight + labelOffset));
     }
@@ -63,8 +63,8 @@ class GradeGaugePainter extends CustomPainter {
               yOrigin,
               xOrigin + rectWidth,
               yOrigin + mainBarHeight,
-              topLeft: Radius.circular(mainBarHeight),
-              bottomLeft: Radius.circular(mainBarHeight));
+              topLeft: const Radius.circular(mainBarHeight),
+              bottomLeft: const Radius.circular(mainBarHeight));
           canvas.drawRRect(roundedRectangle, paintGrade);
         case Grade.elite:
           var roundedRectangle = RRect.fromLTRBAndCorners(
@@ -72,8 +72,8 @@ class GradeGaugePainter extends CustomPainter {
               yOrigin,
               xOrigin + prevWidth + rectWidth + gradeRectWidth / 2,
               yOrigin + mainBarHeight,
-              topRight: Radius.circular(mainBarHeight),
-              bottomRight: Radius.circular(mainBarHeight));
+              topRight: const Radius.circular(mainBarHeight),
+              bottomRight: const Radius.circular(mainBarHeight));
           canvas.drawRRect(roundedRectangle, paintGrade);
         case Grade.intermediate || Grade.experienced || Grade.expert:
           canvas.drawRect(
@@ -120,7 +120,7 @@ class GradeGaugePainter extends CustomPainter {
           TextStyles.grade,
           TextAlign.center,
           i.toInt().toString(),
-          Size(gradeRectWidth, mainBarHeight),
+          const Size(gradeRectWidth, mainBarHeight),
           Offset(xOrigin + prevWidth,
               yOrigin + mainBarHeight / 2 - Sizes.medium / 2));
 
@@ -146,7 +146,7 @@ class GradeGaugePainter extends CustomPainter {
         style,
         TextAlign.center,
         gradeRange.endGrade.toInt().toString(),
-        Size(gradeRectWidth, Sizes.medium),
+        const Size(gradeRectWidth, Sizes.medium),
         Offset(xOrigin + prevWidth - gradeRectWidth / 2,
             yOrigin + mainBarHeight + labelOffset));
   }
