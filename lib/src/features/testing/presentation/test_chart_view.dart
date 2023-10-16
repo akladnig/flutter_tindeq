@@ -72,13 +72,13 @@ class _TestChartState extends State<TestChart> {
   }
 
   LineChartData mainData() {
-    var dataLeft = widget.dataLeft.toFixed();
+    var dataLeft = widget.dataLeft.toFixed;
     List<FlSpot> spotListL =
         dataLeft.map((dataLeft) => FlSpot(dataLeft.$1, dataLeft.$2)).toList();
 
     List<FlSpot> spotListR = [];
     if (widget.dataRight != null) {
-      var dataRight = widget.dataRight!.toFixed();
+      var dataRight = widget.dataRight!.toFixed;
       spotListR.addAll(dataRight
           .map((dataRight) => FlSpot(dataRight.$1, dataRight.$2))
           .toList());
@@ -199,7 +199,7 @@ class _TestChartState extends State<TestChart> {
   LineChartBarData plotPoints(PointListClass? points,
       {colour = ChartColours.dotColor}) {
     List<FlSpot> spotList = [];
-    for (var point in points!.toFixed()) {
+    for (var point in points!.toFixed) {
       if (point != (0.0, 0.0)) {
         spotList.add(FlSpot(point.$1, point.$2));
       }
