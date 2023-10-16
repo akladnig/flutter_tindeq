@@ -8,7 +8,7 @@ import 'package:flutter_tindeq/src/features/analysis/application/analyse_results
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
-import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
+import 'package:flutter_tindeq/src/features/user_details/domain/user.dart';
 
 class AnalysisView extends StatefulWidget {
   const AnalysisView({super.key});

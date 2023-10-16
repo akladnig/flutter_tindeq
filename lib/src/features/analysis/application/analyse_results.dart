@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
-import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
+import 'package:flutter_tindeq/src/features/user_details/domain/user.dart';
 
 //
 //         Grading is based on the IRCRA scale
