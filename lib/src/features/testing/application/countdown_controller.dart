@@ -90,8 +90,8 @@ class Rep extends _$Rep {
     // - Countdown
     // - Hang and
     // - Rest periods
-    if (isInCountdown(timerState, countdown, testTimes) |
-        isInHang(timerState, countdown, repValue, testTimes) |
+    if (isInCountdown(timerState, countdown, testTimes) ||
+        isInHang(timerState, countdown, repValue, testTimes) ||
         isInRest(timerState, countdown, repValue, testTimes)) {
       playBeeps(currentCountdown.value);
     }
@@ -146,43 +146,39 @@ int endHangTime(Period period, int repValue, testTimes) {
 }
 
 bool isStartCountdown(timerState, countdown, testTimes) {
-  return (timerState.value == TimerState.idle) &
+  return (timerState.value == TimerState.idle) &&
       (countdown.value <= testTimes.countdownTime);
 }
 
 /// isStartHang if the current countdown time is at the start of a hang period
 bool isStartHang(timerState, countdown, repValue, testTimes) {
-  return ((timerState.value == TimerState.countdown) |
-          (timerState.value == TimerState.rest)) &
-      (countdown.value >= startHangTime(Period.next, repValue, testTimes)) &
+  return ((timerState.value == TimerState.countdown) ||
+          (timerState.value == TimerState.rest)) &&
+      (countdown.value >= startHangTime(Period.next, repValue, testTimes)) &&
       (countdown.value < endHangTime(Period.next, repValue, testTimes));
 }
 
 /// isStartRest if the current countdown time is at the start of a rest period
 bool isStartRest(timerState, countdown, repValue, testTimes) {
-  return (timerState.value == TimerState.hang) &
-      (testTimes.restTime > 0) &
-      (countdown.value >= endHangTime(Period.current, repValue, testTimes)) &
+  return (timerState.value == TimerState.hang) &&
+      (testTimes.restTime > 0) &&
+      (countdown.value >= endHangTime(Period.current, repValue, testTimes)) &&
       (countdown.value < startHangTime(Period.next, repValue, testTimes));
 }
 
 bool isInCountdown(timerState, countdown, testTimes) {
-  return (timerState.value == TimerState.countdown) &
+  return (timerState.value == TimerState.countdown) &&
       (countdown.value <= testTimes.countdownTime);
 }
 
 bool isInHang(timerState, countdown, repValue, testTimes) {
-  bool isInHang = (timerState.value == TimerState.hang) &
-      (countdown.value >= startHangTime(Period.current, repValue, testTimes)) &
+  return (timerState.value == TimerState.hang) &&
+      (countdown.value >= startHangTime(Period.current, repValue, testTimes)) &&
       (countdown.value <= endHangTime(Period.current, repValue, testTimes));
-
-  return isInHang;
 }
 
 bool isInRest(timerState, countdown, repValue, testTimes) {
-  bool isInRest = (timerState.value == TimerState.rest) &
-      (countdown.value >= endHangTime(Period.current, repValue, testTimes)) &
+  return (timerState.value == TimerState.rest) &&
+      (countdown.value >= endHangTime(Period.current, repValue, testTimes)) &&
       (countdown.value <= startHangTime(Period.next, repValue, testTimes));
-
-  return isInRest;
 }
