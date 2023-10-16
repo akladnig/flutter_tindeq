@@ -32,11 +32,6 @@ class MaxTesting extends PointListClass {
     sigmaList = forceList
         .where((point) => minForce <= point && point <= maxForce)
         .toList();
-    // for (var i = 0; i < forceList.length - 1; i++) {
-    //   if ((forceList[i] > minForce) && (forceList[i] < maxForce)) {
-    //     sigmaList.add(forceList[i]);
-    //   }
-    // }
 
     var sigmaStatistics = sigmaList.statistics;
 
@@ -48,8 +43,8 @@ class MaxTesting extends PointListClass {
   Line get meanLine {
     var (risingIndex, fallingIndex) = getEdge;
 
-    var minPoint = (pointList[risingIndex].$1, mean.force);
-    var maxPoint = (pointList[fallingIndex].$1, mean.force);
+    Point minPoint = (pointList[risingIndex].$1, mean.force);
+    Point maxPoint = (pointList[fallingIndex].$1, mean.force);
     Line line = (minPoint, maxPoint);
     return line;
   }
