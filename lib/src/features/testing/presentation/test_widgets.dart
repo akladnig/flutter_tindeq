@@ -11,7 +11,7 @@ import 'package:flutter_tindeq/src/features/testing/application/countdown_contro
 import 'package:flutter_tindeq/src/features/testing/domain/countdown_model.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/tindeq/tindeq_provider.dart';
-import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
+import 'package:flutter_tindeq/src/features/user_details/domain/user.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 //TODO this needs to have a better name
