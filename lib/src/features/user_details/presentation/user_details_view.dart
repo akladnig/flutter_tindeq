@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/breakpoints.dart';
-import 'package:flutter_tindeq/src/features/user_details/repository/user.dart';
+import 'package:flutter_tindeq/src/features/user_details/domain/user.dart';
 import 'package:flutter_tindeq/src/localization/string_hardcoded.dart';
 
 class UserDetailsView extends StatefulWidget {
@@ -31,6 +31,7 @@ class _UserDetailsViewState extends State<UserDetailsView> {
     );
   }
 }
+
 //TODO fix persistance slider values etc
 class UserDetails extends ConsumerStatefulWidget {
   const UserDetails({super.key});
