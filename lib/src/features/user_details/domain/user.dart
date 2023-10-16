@@ -25,6 +25,7 @@ final class User {
   String notes = "";
 }
 
+//TODO move this to Repository once the ISAR db is setup
 @riverpod
 User user(UserRef ref) {
   return User();
