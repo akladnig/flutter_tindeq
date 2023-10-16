@@ -54,20 +54,20 @@ const plotHeight = 400.0;
 
 // Gauge constants
 
-double weightGaugeSizeWidth = 1024;
+const double weightGaugeSizeWidth = 1024;
 double gradeGaugeSizeWidth =
     gradeRectWidth * (Grade.elite.endGrade - Grade.beginner.startGrade + 1) +
         mainBarHeight;
 
-double circleRadius = Sizes.medium;
-double legendOffset = Sizes.xxSmall;
-double tickOffset = Sizes.xxSmall;
-double labelOffset = Sizes.medium;
+const double circleRadius = Sizes.medium;
+const double legendOffset = Sizes.xxSmall;
+const double tickOffset = Sizes.xxSmall;
+const double labelOffset = Sizes.medium;
 
-double mainBarHeight = Sizes.x4Large;
-double rangeBarHeight = Sizes.x3Large;
+const double mainBarHeight = Sizes.x4Large;
+const double rangeBarHeight = Sizes.x3Large;
 
-double weightBarHeight = Sizes.x4Large;
-double weightBarWidth = Sizes.x4Large * 10;
+const double weightBarHeight = Sizes.x4Large;
+const double weightBarWidth = Sizes.x4Large * 10;
 
-double gradeRectWidth = Sizes.large;
+const double gradeRectWidth = Sizes.large;
