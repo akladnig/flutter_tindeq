@@ -31,7 +31,7 @@ class MaxResults extends _$MaxResults {
 
   setResult(Hand hand, MaxResult result) {
     //Create a new map so that the Map update is notified
-    //- updating and internal member does not result in an update to the map itself
+    //- updating an internal member does not result in an update to the map itself
     Map<Hand, MaxResult> newMap = Map.of(state);
     newMap[hand] = result;
     state = newMap;
@@ -71,7 +71,7 @@ class RfdResults extends _$RfdResults {
 
   setResult(Hand hand, RfdResult result) {
     //Create a new map so that the Map update is notified
-    //- updating and internal member does not result in an update to the map itself
+    //- updating an internal member does not result in an update to the map itself
     Map<Hand, RfdResult> newMap = Map.of(state);
     newMap[hand] = result;
     state = newMap;
