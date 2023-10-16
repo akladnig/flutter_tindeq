@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:statistics/statistics.dart';
@@ -44,7 +43,7 @@ extension CommonTestingService on PointListClass {
   /// Looks for the difference between 5 points which is around 100ms
   /// for a sampling rate of 20ms
   //TODO retun null if an edge is not found?
-  (int, int) get getEdges =>
+  (int, int) get getEdge =>
       (getEdgeIndex(EdgeType.rising), getEdgeIndex(EdgeType.falling));
 
   /// Get the first edge index of either a list of rising or falling points
@@ -74,57 +73,6 @@ extension CommonTestingService on PointListClass {
   bool _diffCondition(edge, diff, currentEdge) {
     return edge == EdgeType.rising ? diff > currentEdge : diff < currentEdge;
   }
-
-  /// Get the Minimum and Maximum RFD from a list of data points
-  /// Looks for the difference between 5 points which is around 100ms
-  /// for a sampling rate of 20ms
-  //TODO retun null if an edge is not found?
-  (int, int) get getEdge {
-    double diff = 0.0;
-    double risingEdge = 0.0;
-    double fallingEdge = 0.0;
-    int risingIndex = 0;
-    int fallingIndex = 0;
-
-    double maxForce = 0.9 * maxStrength.force;
-
-    // Find edges that are greater than the trigger level and less than 90% of the max
-    for (var i = sampleInterval; i < pointList.length - sampleInterval; i++) {
-      int j = i - sampleInterval;
-      int k = i + sampleInterval;
-      //Only process points that are greater than the trigger level and less than 90%
-      if (isEdgePoint(pointList[j], maxForce) &&
-          isEdgePoint(pointList[k], maxForce)) {
-        diff = pointList[k].$2 - pointList[j].$2;
-        // Detect a rising edge
-        if ((diff > risingEdge) &&
-            isSequential(subListByType(ListType.force, start: j, end: k),
-                Sequence.increment)) {
-          risingIndex = i;
-          risingEdge = diff;
-
-          // Detect a falling edge
-
-          //TODO change logic so that falling edge detection is carried out only when a rising edge has been found
-        } else if ((diff < fallingEdge) &&
-            (i > risingIndex) &&
-            isSequential(subListByType(ListType.force, start: j, end: k),
-                Sequence.decrement)) {
-          fallingIndex = i;
-          fallingEdge = diff;
-        }
-      }
-    }
-    // risingIndex = risingIndex + (sampleInterval - 1) ~/ 2;
-    // fallingIndex == 0 ? fallingIndex : fallingIndex + (sampleInterval - 1) ~/ 2;
-
-    return (risingIndex, fallingIndex);
-  }
-
-  //An edge point is greater than the trigger level and less than 90% of max
-  bool isEdgePoint(Point point, double maxLevel) =>
-      // (point.$2 >= 0) && (point.$2 <= maxLevel);
-      (point.$2 >= triggerLevel) && (point.$2 <= maxLevel);
 
   /// Get the data point with a maximum value from a list of data points
   NamedPoint get maxStrength {
@@ -185,23 +133,4 @@ extension CommonTestingService on PointListClass {
     }
     return edgeCondition;
   }
-}
-
-bool isSequential(List<double> points, Sequence sequence) {
-  bool isSequential = true;
-  for (var i = 0; i < points.length - 1; i++) {
-    switch (sequence) {
-      case Sequence.increment:
-        if (points[i + 1] <= points[i]) {
-          isSequential = false;
-          break;
-        }
-      case Sequence.decrement:
-        if (points[i + 1] >= points[i]) {
-          isSequential = false;
-          break;
-        }
-    }
-  }
-  return isSequential;
 }
