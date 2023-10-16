@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
-import 'package:flutter_tindeq/src/features/testing/testing_service.dart';
+import 'package:flutter_tindeq/src/features/testing/application/cft_testing_service.dart';
 
 void analyseResults(Tests currentTest, WidgetRef ref) {
   switch (currentTest) {
@@ -17,7 +17,9 @@ void analyseResults(Tests currentTest, WidgetRef ref) {
   }
 }
 
-//TODO
+//TODO - somehow need to change these to read data from the mock repository properly
+// rather than calling the data directly.
+
 void maxAction(Tests currentTest, WidgetRef ref) {
   switch (currentTest) {
     case Tests.maxTestLeft:
@@ -50,5 +52,6 @@ rfdAction(Tests currentTest, WidgetRef ref) {
 }
 
 cftAction(WidgetRef ref) {
-  ref.read(cftResultsProvider.notifier).setResult(cftResult);
+  // var cft = CftTesting();
+  ref.read(cftResultsProvider.notifier).setResult(pointListCft.cftResult);
 }
