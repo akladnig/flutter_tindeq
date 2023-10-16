@@ -17,7 +17,7 @@ void drawNumberCircle(
       GaugeStyle.number,
       TextAlign.center,
       grade.toString(),
-      Size(2 * circleRadius, 2 * circleRadius),
+      const Size(2 * circleRadius, 2 * circleRadius),
       Offset(xOffset - circleRadius,
           yOffset + (mainBarHeight - GaugeStyle.number.fontSize!) / 2));
 }
@@ -48,6 +48,6 @@ void drawRangeBar(
   var roundedRectangle = RRect.fromRectAndRadius(
       Rect.fromCenter(
           center: centre, width: rangeBarWidth, height: rangeBarHeight),
-      Radius.circular(rangeBarHeight / 2));
+      const Radius.circular(rangeBarHeight / 2));
   canvas.drawRRect(roundedRectangle, GaugeStyle.rangeBarPaint);
 }
