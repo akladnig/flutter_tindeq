@@ -6,23 +6,39 @@ import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:statistics/statistics.dart';
 
-/// Calculate the duration between two points
-double getDuration(point1, point2) => point2.$1 - point1.$1;
-
 class CftTesting extends PointListClass {
   CftTesting(super.pointList);
+
+  CftResult get cftResult {
+    PointListClass meansList = _cftMeansList(pointListCft);
+    double asymptoticForce = _criticalForce(meansList);
+    double factor = cftHangTime / (cftHangTime + cftRestTime);
+    double wPrime = _calcWPrime(asymptoticForce);
+    double anaerobicFunction = (wPrime > 0) ? wPrime / asymptoticForce : 0;
+
+    return (
+      criticalForce: asymptoticForce,
+      // criticalForce: asymptoticForce * factor,
+      asymptoticForce: asymptoticForce,
+      peakForce: meansList[0].$2,
+      cftPoints: meansList,
+      wPrime: wPrime,
+      anaerobicFunction: anaerobicFunction,
+    );
+  }
 
   double _calcWPrime(double criticalForce) {
     double wPrime = 0.0;
     List<double> forceList = subListByType(ListType.force);
     List<double> timeList = subListByType(ListType.time);
+
     var durationSum = 0.0;
     for (var i = 0; i < timeList.length - 2; i++) {
-      var duration = (timeList[i + 1] - timeList[i]);
-      durationSum += duration;
+      durationSum += (timeList[i + 1] - timeList[i]);
     }
     var timeAvg = durationSum / timeList.length;
     debugPrint("timeAvg $timeAvg");
+
     List<double> wPrimeList =
         forceList.where((force) => force > criticalForce).toList();
     debugPrint("${wPrimeList.length}");
@@ -98,24 +114,6 @@ class CftTesting extends PointListClass {
             start: listLength - 6, end: listLength - 1)
         .mean;
     return criticalForce;
-  }
-
-  CftResult get cftResult {
-    PointListClass meansList = _cftMeansList(pointListCft);
-    double asymptoticForce = _criticalForce(meansList);
-    double factor = cftHangTime / (cftHangTime + cftRestTime);
-    double wPrime = _calcWPrime(asymptoticForce);
-    double anaerobicFunction = (wPrime > 0) ? wPrime / asymptoticForce : 0;
-
-    return (
-      criticalForce: asymptoticForce,
-      // criticalForce: asymptoticForce * factor,
-      asymptoticForce: asymptoticForce,
-      peakForce: meansList[0].$2,
-      cftPoints: meansList,
-      wPrime: wPrime,
-      anaerobicFunction: anaerobicFunction,
-    );
   }
 
 // A point is in range if it is within the hangTime interval and the force is above the triggerLevel
