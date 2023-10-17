@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
 
 import '../repository/test_data.dart';
 
