@@ -6,8 +6,9 @@ import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:statistics/statistics.dart';
 
-class CftTesting extends PointListClass {
-  CftTesting(super.pointList);
+extension CftTesting on PointListClass {
+// class CftTesting extends PointListClass {
+//   CftTesting(super.pointList);
 
   CftResult get cftResult {
     PointListClass meansList = _cftMeansList(pointListCft);
@@ -63,7 +64,7 @@ class CftTesting extends PointListClass {
     //TODO tidy names
     for (var i = 0; i < cftTimes.reps; i++) {
       double startTime =
-          (i * (cftTimes.hangTime + cftTimes.restTime) - errorTime).toDouble();
+          (i * (cftTimes.hangTime + cftTimes.restTime) - errorTime);
       double endTime = startTime + cftTimes.hangTime + 2 * errorTime;
       PointList newList1 = pointList
           .where((point) => isPointInTimeRange(point, startTime, endTime))
