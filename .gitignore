@@ -46,3 +46,8 @@ ios/Flutter/Generated 3.xcconfig
 ios/Flutter/flutter_export_environment 3.sh
 ios/Flutter/flutter_export_environment 4.sh
 .obsidian
+~$squareWavw.xlsx
+flutter_jank_metrics_01.json
+lib/src/features/testing/application/build/.last_build_id
+coverage/html
+coverage/coverage/html
