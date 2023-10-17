@@ -17,6 +17,7 @@ void main() {
         (-0.04413592728183971, 1.931986301),
         (0.04041524981991993, 17.387876709)
       ),
+      // Mean is actually steeper as the sample interval is smaller due to the test data size
       mean: 190.4592246,
       timeToPeak: 0.0
     ));
