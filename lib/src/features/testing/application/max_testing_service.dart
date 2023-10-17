@@ -3,9 +3,9 @@ import 'package:flutter_tindeq/src/features/testing/application/common_testing_s
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 import 'package:statistics/statistics.dart';
 
-class MaxTesting extends PointListClass {
-// class MaxTesting extends CommonTestingService {
-  MaxTesting(super.pointList);
+extension MaxTesting on PointListClass {
+// class MaxTesting extends PointListClass {
+  // MaxTesting(super.pointList);
 
   MaxResult get maxResult {
     return (
