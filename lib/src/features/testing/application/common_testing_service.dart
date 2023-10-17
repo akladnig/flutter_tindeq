@@ -83,7 +83,6 @@ extension CommonTestingService on PointListClass {
     return (time: max.$1, force: max.$2);
   }
 
-  //TODO How do I combine the logic for both of these?
   List<(int, int)> edgeList(EdgeType edge) {
     // return a list of the indexes of rising points that have more than 5 sequential points
     var list = <(int, int)>[];
