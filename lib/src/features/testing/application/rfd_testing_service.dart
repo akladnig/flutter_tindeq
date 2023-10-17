@@ -28,18 +28,17 @@ class RfdTesting extends PointListClass {
     int risingIndex = 0;
 
     (risingIndex, _) = getEdge;
-    var maxValue = maxStrength;
     Point maxRfdPoint1 = pointList[risingIndex];
     Point maxRfdPoint2 = pointList[risingIndex + 1];
     var maxLineParameters = lineParameters(maxRfdPoint1, maxRfdPoint2);
     // Get the 10% x value from x = (y - b)/a
     var xMin =
-        (maxValue.force * 0.1 - maxLineParameters.$2) / maxLineParameters.$1;
-    var minPoint = (xMin, maxValue.force * 0.1);
+        (maxStrength.force * 0.1 - maxLineParameters.$2) / maxLineParameters.$1;
+    var minPoint = (xMin, maxStrength.force * 0.1);
     // Get the 90% x value from x = (y - b)/a
     var xMax =
-        (maxValue.force * 0.9 - maxLineParameters.$2) / maxLineParameters.$1;
-    var maxPoint = (xMax, maxValue.force * 0.9);
+        (maxStrength.force * 0.9 - maxLineParameters.$2) / maxLineParameters.$1;
+    var maxPoint = (xMax, maxStrength.force * 0.9);
     Line line = (minPoint, maxPoint);
     return line;
   }
@@ -47,12 +46,10 @@ class RfdTesting extends PointListClass {
   /// Calculates the average RFD based on a line that runs through
   /// the 20% and 80% of maxStrength value
   double get _rfdAverage {
-    Point maxValue = (maxStrength.time, maxStrength.force);
-
     Point max20 =
-        pointList.firstWhere((point) => point.$2 >= maxValue.$2 * 0.2);
+        pointList.firstWhere((point) => point.$2 >= maxStrength.force * 0.2);
     Point max80 =
-        pointList.firstWhere((point) => point.$2 >= maxValue.$2 * 0.8);
+        pointList.firstWhere((point) => point.$2 >= maxStrength.force * 0.8);
 
     double average = (max80.$2 - max20.$2) / (max80.$1 - max20.$1);
 
