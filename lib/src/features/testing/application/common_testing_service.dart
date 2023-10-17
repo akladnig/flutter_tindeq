@@ -1,4 +1,5 @@
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
+import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:statistics/statistics.dart';
 
@@ -72,15 +73,6 @@ extension CommonTestingService on PointListClass {
 
   bool _diffCondition(edge, diff, currentEdge) {
     return edge == EdgeType.rising ? diff > currentEdge : diff < currentEdge;
-  }
-
-  /// Get the data point with a maximum value from a list of data points
-  NamedPoint get maxStrength {
-    Point max = (0.0, 0.0);
-    for (var point in pointList) {
-      max = (point.$2 > max.$2) ? point : max;
-    }
-    return (time: max.$1, force: max.$2);
   }
 
   List<(int, int)> edgeList(EdgeType edge) {

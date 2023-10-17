@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
+import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
 import '../repository/test_data.dart';
@@ -141,17 +142,6 @@ void main() {
       squareWave.edgeList(EdgeType.falling),
       [(27, 31), (77, 81)],
     );
-  });
-
-  // maxStrength
-  group('maxStrength', () {
-    test('maxStrength gets the maximum point from a list', () {
-      expect(testPoints.maxStrength,
-          ((time: 7.581200000000000438e-02, force: 2.505363864898681570e+02)));
-    });
-    test('maxStrength gets the maximum point from the squareWave', () {
-      expect(squareWave.maxStrength, ((time: 0.08, force: 19.31986301)));
-    });
   });
 
 //isOnEdge

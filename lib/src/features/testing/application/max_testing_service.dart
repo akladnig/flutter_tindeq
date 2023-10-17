@@ -15,6 +15,15 @@ extension MaxTesting on PointListClass {
     );
   }
 
+  /// Get the data point with a maximum value from a list of data points
+  NamedPoint get maxStrength {
+    Point max = (0.0, 0.0);
+    for (var point in pointList) {
+      max = (point.$2 > max.$2) ? point : max;
+    }
+    return (time: max.$1, force: max.$2);
+  }
+
   // Get the mean of the maximum part of the data - which is clipped to one sigma
   NamedPoint get _mean {
     var (risingIndex, fallingIndex) = getEdge;
