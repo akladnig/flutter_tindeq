@@ -8,8 +8,9 @@ void main() {
   test('lineParameters', () {
     expect(lineParameters((-2, 6), (5, 27)), (3, 12));
   });
-  // rfdPeak
-  test('rfdPeak', () {
+  // rfdResult
+  //TODO add tests for horizontal and vertical lines and create specific RFD test data
+  test('rfdResult', () {
     expect(rfdWave.rfdResult, (
       peak: 169.561733525,
       peakPoint: (0.0, 10.0),
