@@ -127,7 +127,7 @@ var rfdWave = RfdTesting([
   (1.9, 0.951959089),
 ]);
 
-var squareWave = MaxTesting([
+var squareWave = PointListClass([
   (-0.08, 1.206029211),
   (-0.06, 0.712331731),
   (-0.04, 3.105896908),
