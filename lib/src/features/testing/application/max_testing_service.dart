@@ -10,13 +10,13 @@ class MaxTesting extends PointListClass {
   MaxResult get maxResult {
     return (
       maxStrength: maxStrength.force,
-      meanStrength: mean.force,
-      meanLine: meanLine
+      meanStrength: _mean.force,
+      meanLine: _meanLine
     );
   }
 
   // Get the mean of the maximum part of the data - which is clipped to one sigma
-  NamedPoint get mean {
+  NamedPoint get _mean {
     var (risingIndex, fallingIndex) = getEdge;
 
     List<double> forceList =
@@ -40,11 +40,11 @@ class MaxTesting extends PointListClass {
   }
 
   /// Create a line that runs through the mean and bounded by the rising and falling edges
-  Line get meanLine {
+  Line get _meanLine {
     var (risingIndex, fallingIndex) = getEdge;
 
-    Point minPoint = (pointList[risingIndex].$1, mean.force);
-    Point maxPoint = (pointList[fallingIndex].$1, mean.force);
+    Point minPoint = (pointList[risingIndex].$1, _mean.force);
+    Point maxPoint = (pointList[fallingIndex].$1, _mean.force);
     Line line = (minPoint, maxPoint);
     return line;
   }
