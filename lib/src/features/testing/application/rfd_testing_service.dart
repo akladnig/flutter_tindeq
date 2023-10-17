@@ -7,7 +7,7 @@ class RfdTesting extends PointListClass {
   RfdTesting(super.pointList);
 
   /// Get the Maximum RFD from the rising edge of a list of data points
-  double get _rfdPeak {
+  double get rfdPeak {
     int risingIndex = 0;
 //TODO change this back to pointList.getEdge - extend class or create extension methods?
     (risingIndex, _) = getEdge;
@@ -58,7 +58,7 @@ class RfdTesting extends PointListClass {
 
   RfdResult get rfdResult {
     return (
-      peak: _rfdPeak,
+      peak: rfdPeak,
       peakPoint: _rfdPeakPoint,
       peakLine: _rfdLine,
       mean: _rfdAverage,
