@@ -1,10 +1,12 @@
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
+import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 
-class RfdTesting extends PointListClass {
-  RfdTesting(super.pointList);
+extension RfdTesting on PointListClass {
+// class RfdTesting extends PointListClass {
+//   RfdTesting(super.pointList);
 
   /// Get the Maximum RFD from the rising edge of a list of data points
   double get rfdPeak {
