@@ -119,6 +119,14 @@ void main() {
     );
   });
 
+  //toPoint
+  test('toPoint', () {
+    expect(
+      squareWave.toPoint(0),
+      (-0.08, 1.206029211),
+    );
+  });
+
   test('rfdIndexList - pointListCft', () {
     expect(
       pointListCft.toPointList(pointListCft.rfdIndexList(EdgeType.rising)),
