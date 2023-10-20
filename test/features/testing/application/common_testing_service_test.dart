@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
-import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
+import 'package:flutter_tindeq/src/features/testing/repository/data.dart';
 
 import '../repository/test_data.dart';
 
@@ -85,11 +85,20 @@ void main() {
     });
 
     test(
-        'getEdge - get the first rising and falling edge from a subset(20, 90) of the edge data',
+        'getEdge(20, 90) - get the first rising and falling edge from a subset(20, 90) of the edge data',
         () {
       expect(
         squareWave.sublist(20, 90).getEdge,
         (34, 9),
+      );
+    });
+
+    test(
+        'getEdge(0, 900) - get the first rising and falling edge from a subset(20, 90) of the edge data',
+        () {
+      expect(
+        pointListCft.sublist(0, 900).getEdge,
+        (46, 599),
       );
     });
 
@@ -101,6 +110,51 @@ void main() {
         (0, 21),
       );
     });
+  });
+
+  test('rfdIndexList Length - pointListCft', () {
+    expect(
+      pointListCft.sublist(14344, 20085).rfdIndexList(EdgeType.rising).length,
+      6,
+    );
+  });
+
+  test('rfdIndexList - pointListCft', () {
+    expect(
+      pointListCft.toPointList(pointListCft.rfdIndexList(EdgeType.rising)),
+      [
+        (0.602761, 17.064092082977297),
+        (10.245003, 16.84762899398804),
+        (10.816884, 22.41489736557007),
+        (21.222926, 11.449510974884033),
+        (31.405975, 8.90670244216919),
+        (41.422792, 12.172501964569092),
+        (41.591038, 18.145390911102297),
+        (51.204247, 12.507395191192627),
+        (54.760294, 20.265201015472414),
+        (61.199096, 5.657259864807129),
+        (64.956909, 22.16552869796753),
+        (71.07055, 6.935842914581299),
+        (81.378712, 6.047838611602783),
+        (91.05975, 8.317961139678955),
+        (101.570025, 11.85775987625122),
+        (111.204341, 11.287953777313232),
+        (121.568327, 6.336490077972412),
+        (121.848827, 13.700405521392822),
+        (131.449874, 8.291968746185303),
+        (141.802256, 6.823156757354736),
+        (142.015341, 11.29652063369751),
+        (151.46982, 4.2166322898864745),
+        (161.698586, 6.981793804168701),
+        (171.637584, 4.491897506713867),
+        (181.484453, 6.307673854827881),
+        (191.746426, 5.024076862335205),
+        (201.573303, 5.814289970397949),
+        (211.701046, 8.320054454803467),
+        (221.75019, 7.448113842010498),
+        (231.844218, 7.840494556427002)
+      ],
+    );
   });
 
 //edgeList
@@ -134,6 +188,51 @@ void main() {
         [(18, 22)],
       );
     });
+
+    test('edgeList - pointListCft', () {
+      expect(
+        pointListCft.edgeList(EdgeType.rising),
+        [
+          (14, 74),
+          (830, 857),
+          (879, 900),
+          (1759, 1789),
+          (2611, 2642),
+          (3443, 3455),
+          (3457, 3480),
+          (4250, 4290),
+          (4529, 4574),
+          (5098, 5143),
+          (5391, 5422),
+          (5921, 5960),
+          (6780, 6821),
+          (7575, 7628),
+          (8444, 8491),
+          (9250, 9304),
+          (10130, 10150),
+          (10152, 10171),
+          (10947, 11001),
+          (11818, 11831),
+          (11833, 11879),
+          (12628, 12677),
+          (13471, 13510),
+          (14308, 14343),
+          (15125, 15181),
+          (15984, 16027),
+          (16800, 16859),
+          (17633, 17666),
+          (18486, 18499),
+          (19318, 19373)
+        ],
+      );
+    });
+
+    test('edgeList(20, 90)', () {
+      expect(
+        squareWave.sublist(20, 90).edgeList(EdgeType.rising),
+        [(32, 36)],
+      );
+    });
   });
 
 //fallingList
@@ -143,6 +242,13 @@ void main() {
       [(27, 31), (77, 81)],
     );
   });
+
+  // test('edgeList - pointListCft', () {
+  //   expect(
+  //     pointListCft.edgeList(EdgeType.falling),
+  //     [(18, 22)],
+  //   );
+  // });
 
 //isOnEdge
   test('isOnEdge', () {
