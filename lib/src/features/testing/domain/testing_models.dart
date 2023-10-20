@@ -117,7 +117,13 @@ class PointListClass extends ListBase<Point> {
   @override
   PointListClass sublist(int start, [int? end]) {
     PointList sublist = [];
-    sublist = pointList.sublist(start, end!);
+    //TODO if values are out of range clamp and throw an error or maybe log it??
+
+    start = start.clamp(0, pointList.length);
+
+    end = end ?? pointList.length;
+    end = end.clamp(0, pointList.length);
+    sublist = pointList.sublist(start, end);
     return PointListClass(sublist);
   }
 
