@@ -1,7 +1,3 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
-import 'package:flutter_tindeq/src/features/testing/application/max_testing_service.dart';
-import 'package:flutter_tindeq/src/features/testing/application/rfd_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
 var testPoints = PointListClass([
@@ -24,7 +20,7 @@ var flatLine1 = PointListClass([
   (5.0, 3.1),
 ]);
 
-var rfdWave = RfdTesting([
+var rfdWave = PointListClass([
   (-0.08, 1.206029211),
   (-0.06, 0.712331731),
   (-0.04, 3.105896908),
