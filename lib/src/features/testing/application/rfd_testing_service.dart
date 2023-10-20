@@ -11,7 +11,7 @@ extension RfdTesting on PointListClass {
   /// Get the Maximum RFD from the rising edge of a list of data points
   double get rfdPeak {
     int risingIndex = 0;
-//TODO change this back to pointList.getEdge - extend class or create extension methods?
+    //TODO change this back to pointList.getEdge - extend class or create extension methods?
     (risingIndex, _) = getEdge;
     Point rfdRisingPointStart = pointList[risingIndex - sampleInterval];
     Point rfdRisingPointEnd = pointList[risingIndex + sampleInterval];
