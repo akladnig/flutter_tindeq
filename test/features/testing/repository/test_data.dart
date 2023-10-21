@@ -1,6 +1,6 @@
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
-var testPoints = PointListClass([
+var testPoints = PointList([
   (5.339800000000000102e-02, 2.509890956878662038e-02),
   (5.339800000000000102e-02, -2.509890956878662038e-02),
   (6.460499999999999576e-02, 0.000000000000000000e+00),
@@ -12,7 +12,7 @@ var testPoints = PointListClass([
   (1.318529999999999980e-01, 2.511448307037353445e+00),
   (1.430619999999999947e-01, 2.513054771423339773e+00),
 ]);
-var flatLine1 = PointListClass([
+var flatLine1 = PointList([
   (1.0, 3.1),
   (2.0, 3.1),
   (3.0, 3.1),
@@ -20,7 +20,7 @@ var flatLine1 = PointListClass([
   (5.0, 3.1),
 ]);
 
-var rfdWave = PointListClass([
+var rfdWave = PointList([
   (-0.08, 1.206029211),
   (-0.06, 0.712331731),
   (-0.04, 3.105896908),
@@ -123,7 +123,7 @@ var rfdWave = PointListClass([
   (1.9, 0.951959089),
 ]);
 
-var squareWave = PointListClass([
+var squareWave = PointList([
   (-0.08, 1.206029211),
   (-0.06, 0.712331731),
   (-0.04, 3.105896908),
