@@ -23,9 +23,9 @@ class TestView extends HookWidget {
     this.units = "kg",
     required this.results,
   });
-  final PointListClass dataLeft;
-  final PointListClass? dataRight;
-  final PointListClass? points;
+  final PointList dataLeft;
+  final PointList? dataRight;
+  final PointList? points;
   final List<Legend>? legends;
   final List<(Line, Color)>? lines;
   final String testTitle;

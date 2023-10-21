@@ -82,7 +82,7 @@ typedef CftResult = ({
   double peakForce,
   double criticalForce,
   double asymptoticForce,
-  PointListClass cftPoints,
+  PointList cftPoints,
   double wPrime,
   double anaerobicFunction,
 });
@@ -93,7 +93,7 @@ class CftResults extends _$CftResults {
     peakForce: 0.0,
     criticalForce: 0.0,
     asymptoticForce: 0.0,
-    cftPoints: PointListClass([]),
+    cftPoints: PointList([]),
     wPrime: 0.0,
     anaerobicFunction: 0.0
   );

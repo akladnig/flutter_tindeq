@@ -4,11 +4,11 @@ import 'package:flutter_tindeq/src/constants/theme.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 
 class TestChart extends StatefulWidget {
-  final PointListClass dataLeft;
-  final PointListClass? dataRight;
+  final PointList dataLeft;
+  final PointList? dataRight;
   final int duration;
   final List<Legend>? legends;
-  final PointListClass? points;
+  final PointList? points;
   final List<(Line, Color)>? lines;
   const TestChart({
     super.key,
@@ -196,7 +196,7 @@ class _TestChartState extends State<TestChart> {
 
   // TODO: dot styling
 
-  LineChartBarData plotPoints(PointListClass? points,
+  LineChartBarData plotPoints(PointList? points,
       {colour = ChartColours.dotColor}) {
     List<FlSpot> spotList = [];
     for (var point in points!.toFixed) {
