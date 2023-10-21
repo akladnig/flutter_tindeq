@@ -3,6 +3,7 @@ import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
+import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
@@ -16,6 +17,26 @@ class CftTestingView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var cftTests = ref.watch(cftResultsProvider);
+
+    List<(Line, Color)> edgeList = [];
+    Color risingColour = ChartColours.contentColorPink;
+
+    for (var edge in pointListCft.edgeIndexList(EdgeType.rising)) {
+      risingColour = risingColour == ChartColours.contentColorPink
+          ? ChartColours.contentColorRed
+          : ChartColours.contentColorPink;
+      edgeList.add((
+        (pointListCft.toPoint(edge.$1), pointListCft.toPoint(edge.$2)),
+        risingColour,
+      ));
+    }
+
+    for (var edge in pointListCft.edgeIndexList(EdgeType.falling)) {
+      edgeList.add((
+        (pointListCft.toPoint(edge.$1), pointListCft.toPoint(edge.$2)),
+        ChartColours.contentColorWhite
+      ));
+    }
 
     return Scaffold(
       // appBar: const PreferredSize(
@@ -38,7 +59,8 @@ class CftTestingView extends HookConsumerWidget {
                       (240.0, cftTests.criticalForce)
                     ),
                     ChartColours.contentColorRed
-                  )
+                  ),
+                  ...edgeList,
                 ],
                 results: const Results(),
                 countdownTime: const CountDownWidget(cftTimes),
@@ -67,9 +89,9 @@ class Results extends HookConsumerWidget {
           const StartButton(Tests.cftTest),
           ResultsRow("Peak Load: ", cftTests.peakForce, "kg"),
           ResultsRow("Critical Load: ", cftTests.criticalForce, "kg"),
-          ResultsRow("Asymptotic Load: ", cftTests.asymptoticForce, "kg"),
+          ResultsRow("Asymptotic : ", cftTests.asymptoticForce, "kg"),
           ResultsRow("W': ", cftTests.wPrime, digits: 0, "J"),
-          ResultsRow("Anaerobic Function: ", cftTests.anaerobicFunction, ""),
+          ResultsRow("Anaerobic Func: ", cftTests.anaerobicFunction, ""),
         ],
       ),
     );
