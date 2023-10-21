@@ -4,10 +4,7 @@ import 'package:flutter_tindeq/src/features/testing/application/max_testing_serv
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
 import 'package:flutter_tindeq/src/features/testing/repository/test_results_provider.dart';
 
-extension RfdTesting on PointListClass {
-// class RfdTesting extends PointListClass {
-//   RfdTesting(super.pointList);
-
+extension RfdTesting on PointList {
   /// Get the Maximum RFD from the rising edge of a list of data points
   double get rfdPeak {
     int risingIndex = 0;

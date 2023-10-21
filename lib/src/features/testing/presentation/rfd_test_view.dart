@@ -39,8 +39,8 @@ class RfdTestingView extends HookWidget {
 
 class RfdTestView extends HookConsumerWidget {
   RfdTestView({super.key});
-  final PointListClass dataLeft = pointListRfdL;
-  final PointListClass dataRight = pointListRfdR;
+  final PointList dataLeft = pointListRfdL;
+  final PointList dataRight = pointListRfdR;
   final pointLeft = pointListRfdL.rfdPeak;
   final pointRight = pointListRfdR.rfdPeak;
   final legends = [
@@ -52,7 +52,7 @@ class RfdTestView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var rfdTests = ref.watch(rfdResultsProvider);
 
-    var points = PointListClass(
+    var points = PointList(
         [rfdTests[Hand.left].peakPoint, rfdTests[Hand.right].peakPoint]);
 
     return TestView(

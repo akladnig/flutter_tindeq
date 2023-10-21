@@ -6,18 +6,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'testing_models.g.dart';
 
 typedef Point = (double, double);
-// class Point {
-//   bool get isInEdge{
-
-//   }
-// }
 typedef NamedPoint = ({double time, double force});
-typedef PointList = List<Point>;
-
-enum EdgeType { rising, falling }
+typedef Points = List<Point>;
 
 /// A line drawn from point to point
 typedef Line = (Point, Point);
+
+enum EdgeType { rising, falling }
 
 typedef Legend = ({String title, Color colour});
 
@@ -92,11 +87,10 @@ class AllTests extends _$AllTests {
   }
 }
 
-//TODO move all the methods to a controller class
-class PointListClass extends ListBase<Point> {
-  PointListClass(this.pointList);
+class PointList extends ListBase<Point> {
+  PointList(this.pointList);
 
-  final PointList pointList;
+  final Points pointList;
 
   @override
   set length(int newLength) {
@@ -115,8 +109,8 @@ class PointListClass extends ListBase<Point> {
   }
 
   @override
-  PointListClass sublist(int start, [int? end]) {
-    PointList sublist = [];
+  PointList sublist(int start, [int? end]) {
+    Points sublist = [];
     //TODO if values are out of range clamp and throw an error or maybe log it??
 
     start = start.clamp(0, pointList.length);
@@ -124,11 +118,11 @@ class PointListClass extends ListBase<Point> {
     end = end ?? pointList.length;
     end = end.clamp(0, pointList.length);
     sublist = pointList.sublist(start, end);
-    return PointListClass(sublist);
+    return PointList(sublist);
   }
 
-  PointList get toFixed {
-    PointList fixedList = [];
+  Points get toFixed {
+    Points fixedList = [];
     for (var point in pointList) {
       Point fixedPoint = (point.$1, (point.$2 * 10).round() / 10);
       fixedList.add(fixedPoint);

@@ -39,8 +39,8 @@ class MaxTestingView extends HookWidget {
 
 class MaxTestView extends ConsumerWidget {
   MaxTestView({super.key});
-  final PointListClass dataLeft = pointListMaxL;
-  final PointListClass dataRight = pointListMaxR;
+  final PointList dataLeft = pointListMaxL;
+  final PointList dataRight = pointListMaxR;
   final legends = [
     (title: "Left", colour: ChartColours.contentColorBlue),
     (title: "Right", colour: ChartColours.contentColorRed)
