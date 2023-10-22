@@ -3,7 +3,6 @@ import 'package:flutter_tindeq/src/common_widgets/navigation_rail.dart';
 import 'package:flutter_tindeq/src/constants/app_sizes.dart';
 import 'package:flutter_tindeq/src/constants/test_constants.dart';
 import 'package:flutter_tindeq/src/constants/theme.dart';
-import 'package:flutter_tindeq/src/features/testing/application/common_testing_service.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_view.dart';
 import 'package:flutter_tindeq/src/features/testing/presentation/test_widgets.dart';
 import 'package:flutter_tindeq/src/features/testing/domain/testing_models.dart';
