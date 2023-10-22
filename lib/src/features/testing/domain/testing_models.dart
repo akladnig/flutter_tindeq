@@ -109,12 +109,12 @@ class IndexList extends ListBase<int> {
   }
 
   Points toPointList(PointList pointList, [int? offset]) {
-    Points rfdList = [];
+    Points list = [];
     offset = offset ?? 0;
     for (var index in indexList) {
-      rfdList.add(pointList[offset + index]);
+      list.add(pointList[offset + index]);
     }
-    return rfdList;
+    return list;
   }
 }
 
