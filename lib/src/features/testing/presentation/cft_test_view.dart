@@ -18,26 +18,6 @@ class CftTestingView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var cftTests = ref.watch(cftResultsProvider);
 
-    List<(Line, Color)> edgeList = [];
-    Color risingColour = ChartColours.contentColorPink;
-
-    for (var edge in pointListCft.edgeIndexList(EdgeType.rising)) {
-      risingColour = risingColour == ChartColours.contentColorPink
-          ? ChartColours.contentColorRed
-          : ChartColours.contentColorPink;
-      edgeList.add((
-        (pointListCft.toPoint(edge.$1), pointListCft.toPoint(edge.$2)),
-        risingColour,
-      ));
-    }
-
-    for (var edge in pointListCft.edgeIndexList(EdgeType.falling)) {
-      edgeList.add((
-        (pointListCft.toPoint(edge.$1), pointListCft.toPoint(edge.$2)),
-        ChartColours.contentColorWhite
-      ));
-    }
-
     return Scaffold(
       // appBar: const PreferredSize(
       //     preferredSize: Size.fromHeight(80.0),
@@ -60,7 +40,6 @@ class CftTestingView extends HookConsumerWidget {
                     ),
                     ChartColours.contentColorRed
                   ),
-                  ...edgeList,
                 ],
                 results: const Results(),
                 countdownTime: const CountDownWidget(cftTimes),
