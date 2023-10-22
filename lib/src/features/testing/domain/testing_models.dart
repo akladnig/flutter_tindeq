@@ -87,6 +87,37 @@ class AllTests extends _$AllTests {
   }
 }
 
+class IndexList extends ListBase<int> {
+  IndexList(this.indexList);
+
+  final List<int> indexList;
+
+  @override
+  set length(int newLength) {
+    indexList.length = newLength;
+  }
+
+  @override
+  int get length => indexList.length;
+
+  @override
+  int operator [](int index) => indexList[index];
+
+  @override
+  void operator []=(int i, int index) {
+    indexList[i] = index;
+  }
+
+  Points toPointList(PointList pointList, [int? offset]) {
+    Points rfdList = [];
+    offset = offset ?? 0;
+    for (var index in indexList) {
+      rfdList.add(pointList[offset + index]);
+    }
+    return rfdList;
+  }
+}
+
 class PointList extends ListBase<Point> {
   PointList(this.pointList);
 
