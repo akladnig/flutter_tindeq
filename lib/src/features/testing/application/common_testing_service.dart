@@ -152,11 +152,11 @@ extension CommonTestingService on PointList {
 
   Point toPoint(int index) => pointList[index];
 
-  Points toPointList(List<int> indexList, [int? startIndex]) {
+  Points toPointList(List<int> indexList, [int? offset]) {
     Points rfdList = [];
-    startIndex = startIndex ?? 0;
+    offset = offset ?? 0;
     for (var index in indexList) {
-      rfdList.add(pointList[startIndex + index]);
+      rfdList.add(pointList[offset + index]);
     }
     return rfdList;
   }
