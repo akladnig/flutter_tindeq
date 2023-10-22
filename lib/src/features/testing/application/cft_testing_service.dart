@@ -8,7 +8,7 @@ extension CftTesting on PointList {
   CftResult get cftResult {
     // PointListClass meansList = _cftMeansList(pointListCft);
     PointList meansList = cftMeanList;
-    double asymptoticForce = meansList._criticalForce;
+    double asymptoticForce = meansList.criticalForce;
     double factor = cftHangTime / (cftHangTime + cftRestTime);
     double wPrime = _calcWPrime(asymptoticForce);
     double anaerobicFunction = (wPrime > 0) ? wPrime / asymptoticForce : 0;
@@ -19,8 +19,10 @@ extension CftTesting on PointList {
       asymptoticForce: asymptoticForce,
       peakForce: meansList[0].$2,
       cftPoints: meansList,
-      wPrime: wPrime,
-      anaerobicFunction: anaerobicFunction,
+      wPrime: 0,
+      // wPrime: wPrime,
+      anaerobicFunction: 0,
+      // anaerobicFunction: anaerobicFunction,
     );
   }
 
@@ -68,23 +70,20 @@ extension CftTesting on PointList {
     Points meanList = [];
 
     for (var subList in cftHangList) {
-      var forceList = PointList(pointList.sublist(subList.$1, subList.$2));
-      List<double> fl2 = forceList.subListByType(ListType.force);
+      var list = PointList(pointList.sublist(subList.$1, subList.$2));
+      List<double> forceList = list.subListByType(ListType.force);
 
-      var statistics = fl2.statistics;
+      var statistics = forceList.statistics;
       // Calculate the 1 Sigma mean by deleting those values from the list.
       double minForce = statistics.mean - statistics.standardDeviation;
-      // double minForce = statistics.mean;
       double maxForce = statistics.mean + statistics.standardDeviation;
-      // double maxForce = statistics.max;
 
-      Points sigmaList = pointList
-          .where((point) => isPointInForceRange(point, minForce, maxForce))
+      List<double> sigmaList = forceList
+          .where((force) => (minForce < force) && (force < maxForce))
           .toList();
 
-      var newList = PointList(sigmaList);
-      double meanForce = newList.subListByType(ListType.force).mean;
-      double meanTime = forceList.subListByType(ListType.time).mean;
+      double meanForce = sigmaList.mean;
+      double meanTime = list.subListByType(ListType.time).mean;
       meanList.add((meanTime, meanForce));
     }
     return PointList(meanList);
@@ -100,10 +99,8 @@ extension CftTesting on PointList {
     int hangStartIndex = 0;
     int hangEndIndex = 0;
 
-    List<int> rfdStart = rfdIndexList(EdgeType.rising);
-    int rfdStartIndex = 0;
-    List<int> rfdEnd = rfdIndexList(EdgeType.falling);
-    int rfdEndIndex = 0;
+    int edgeStartIndex = 0;
+    int edgeEndIndex = 0;
 
     for (var i = 0; i < pointList.length; i++) {
       // The hang period ends when the force drops below the triggerLevel and there's a difference
@@ -111,23 +108,19 @@ extension CftTesting on PointList {
       // equal it means we are in the rest period
       if (pointList[i].$2 <= triggerLevel) {
         if (hangStartIndex < hangEndIndex) {
-          // Narrow range down to the rfd edges
-          while ((rfdStart[rfdStartIndex] < hangStartIndex) &&
-              (rfdStartIndex < rfdStart.length - 1)) {
-            rfdStartIndex++;
+          // Narrow range down to the top of the rising and falling edge
+          var j = hangStartIndex;
+          while (pointList[j + 1].$2 > pointList[j].$2) {
+            j++;
           }
-          while ((rfdEnd[rfdEndIndex] < hangEndIndex) &&
-              (rfdEndIndex < rfdEnd.length - 1)) {
-            rfdEndIndex++;
-          }
-          rfdEndIndex--;
+          edgeStartIndex = j;
 
-          // Handle the edge case for the very last EndIndex
-          if (rfdEnd[rfdEnd.length - 1] < hangEndIndex) {
-            rfdEndIndex = rfdEnd.length - 1;
+          j = hangEndIndex - 1;
+          while (pointList[j - 1].$2 > pointList[j].$2) {
+            j--;
           }
-
-          hangListIndex.add((rfdStart[rfdStartIndex], rfdEnd[rfdEndIndex]));
+          edgeEndIndex = j;
+          hangListIndex.add((edgeStartIndex, edgeEndIndex));
         }
         hangStartIndex = i;
         hangEndIndex = hangStartIndex;
@@ -141,23 +134,11 @@ extension CftTesting on PointList {
 
   /// Calculate the average mean from the last 60secs of means
 
-  double get _criticalForce {
+  double get criticalForce {
     int listLength = pointList.length;
     double criticalForce = subListByType(ListType.force,
             start: listLength - 6, end: listLength - 1)
         .mean;
     return criticalForce;
-  }
-
-  // A point is in range if it is within the hangTime interval and the force is above the triggerLevel
-  bool isPointInTimeRange(Point point, double startTime, double endTime) {
-    return (point.$1 > startTime) &&
-        (point.$1 < endTime) &&
-        (point.$2 > triggerLevel);
-  }
-
-  // A point is in range if it is within the min and max force
-  bool isPointInForceRange(Point point, double minForce, double maxForce) {
-    return (minForce < point.$2) && (point.$2 < maxForce);
   }
 }
